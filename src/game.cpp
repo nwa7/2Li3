@@ -15,8 +15,9 @@ static const unsigned int WINDOW_HEIGHT = 1080;
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
 
 /* Espace fenêtre virtuelle */
-static const float GL_VIEW_SIZE = 1.;
+static const float GL_VIEW_SIZE = 2.;
 
+// Structures
 typedef struct {
     float x;
     float y;
@@ -28,6 +29,23 @@ typedef struct{
     int b;
 } Color;
 
+// Fonctions des tructures
+Vertex ini_vertex (float x, float y){
+    Vertex new_v;
+    new_v.x=x;
+    new_v.y=y;
+    return new_v;
+};
+
+Color ini_color( int r, int g, int b){
+    Color new_c;
+    new_c.r = r;
+    new_c.g = g;
+    new_c.b = b;
+    return new_c;
+};
+
+// Classes
 class Quad
 {
     public:
@@ -41,26 +59,27 @@ class Quad
     Color color;
 };
 
-Vertex ini_vertex (float x, float y){
-    Vertex new_v;
-    new_v.x=x;
-    new_v.y=y;
-    return new_v;
-}
+class Map
+{
+    Quad q1;
+    Quad q2;
+    int width;
+    int height;
+};
 
-Color ini_color( int r, int g, int b){
-    Color new_c;
-    new_c.r = r;
-    new_c.g = g;
-    new_c.b = b;
-    return new_c;
-}
+class Player
+{
+    int speed;
+    
+};
 
 // test 
 
 Vertex posi = ini_vertex(0,0);
-Color c = ini_color(0,255,0);
-Quad q = Quad(posi, 500,300, c);
+Color c = ini_color(0,150,150);
+Quad q = Quad(posi, 10,10, c);
+Player p;
+
 
 int compteur;
 float aspectRatio;
@@ -70,24 +89,25 @@ void drawSquare(int filled)
     if(filled) 
     {
         glBegin(GL_TRIANGLE_FAN);
-        glVertex2f(0.0, 0.0);
     }
     else 
     {
         glBegin(GL_LINE_STRIP);
     }
 
-    glVertex2f( 0.5 , -0.5);
     glVertex2f( 0.5 , 0.5);
-    glVertex2f( -0.5 , 0.5);
-    glVertex2f( -0.5 , -0.5);
     glVertex2f( 0.5 , -0.5);
+    glVertex2f( -0.5 , -0.5);
+    glVertex2f( -0.5 , 0.5);
+    
 
     glEnd();
 } 
 
 int main(int argc, char** argv) 
 {
+    /*** INITIALIZATION ***/
+
     /* Déclaration du type tableau Vertex */
     Vertex tabvertex[256];
 
@@ -151,17 +171,22 @@ int main(int argc, char** argv)
         /* Recuperation du temps au debut de la boucle */
         Uint32 startTime = SDL_GetTicks();
 
-
-        
         /* Placer ici le code de dessin */
 
-        glColor3f(c.r, c.g, c.b);
-        drawSquare(1);
+        glColor3f(q.color.r, q.color.g, q.color.b);
+        glPushMatrix();
+            glTranslatef(q.pos.x, q.pos.y, 0.);
+            //glScalef(q.width, q.height, 1.);
+            drawSquare(1);
+        glPopMatrix();
+        
         
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
         
-        /* Boucle traitant les evenements */
+        
+        /* EVENTS */
+
         SDL_Event e;
         while(SDL_PollEvent(&e)) 
         {
@@ -213,7 +238,9 @@ int main(int argc, char** argv)
         }
 
         /* Calcul du temps ecoule */
+
         Uint32 elapsedTime = SDL_GetTicks() - startTime;
+
         
         /* Si trop peu de temps s'est ecoule, on met en pause le programme */
         if(elapsedTime < FRAMERATE_MILLISECONDS) 
@@ -221,6 +248,9 @@ int main(int argc, char** argv)
             SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
         }
     }
+
+    /*** FIN DU JEU ***/
+
 
     /* Liberation des ressources associees a la SDL */
     SDL_GL_DeleteContext(context);
