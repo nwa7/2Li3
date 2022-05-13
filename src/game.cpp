@@ -15,9 +15,7 @@ static const unsigned int WINDOW_HEIGHT = 1080;
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
 
 /* Espace fenêtre virtuelle */
-static const float GL_VIEW_SIZE = 2.;
-static const int polycercle = 300;
-static const float pi = 3.14159;
+static const float GL_VIEW_SIZE = 1.;
 
 typedef struct {
     float x;
@@ -58,6 +56,7 @@ Color ini_color( int r, int g, int b){
     return new_c;
 }
 
+// test 
 
 Vertex posi = ini_vertex(0,0);
 Color c = ini_color(0,255,0);
@@ -86,16 +85,6 @@ void drawSquare(int filled)
     glVertex2f( 0.5 , -0.5);
 
     glEnd();
-    glBegin(GL_LINE_LOOP);
-    //    eventuellement d’autres points ...
-    //    aspectRatio = WINDOW_WIDTH / (float) WINDOW_HEIGHT;
-    //    Vertex tabvertex[256];
-    //    for(int j=0;j<compteur; j++){
-    //        glColor3f(1, 0, 1);
-    //        glVertex2f(tabvertex[j].x, tabvertex[j].y);
-    //        GL_LINE_LOOP;
-    //    }
-        glEnd();
 } 
 
 int main(int argc, char** argv) 
@@ -168,7 +157,7 @@ int main(int argc, char** argv)
         /* Placer ici le code de dessin */
 
         
-
+        
         glColor3f(c.r, c.g, c.b);
         drawSquare(1);
         
