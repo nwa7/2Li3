@@ -1,18 +1,16 @@
-CC			= g++
+CC = g++
 CFLAGS	= -Wall -O2 -g
-LDFLAGS	= -lSDL2 -lGLU -lGL -lm
+LDFLAGS = -lSDL2 -lGLU -lGL -lm
 
 BINDIR	= bin/
 SRCDIR	= src/
 OBJDIR	= obj/
 
-# Fichiers TD 02
-
-# Fichiers exercice 01
+# Fichiers
 OBJ_GAME= game.o
 EXEC_GAME= game.out
 
-# Regles compilation TD 02
+# Regles de compilation
 
 all :
 
