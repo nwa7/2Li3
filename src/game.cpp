@@ -15,9 +15,7 @@ static const unsigned int WINDOW_HEIGHT = 1080;
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
 
 /* Espace fenêtre virtuelle */
-static const float GL_VIEW_SIZE = 2.;
-static const int polycercle = 300;
-static const float pi = 3.14159;
+static const float GL_VIEW_SIZE = 1.;
 
 typedef struct {
     float x;
@@ -66,7 +64,6 @@ Quad q = Quad(posi, 500,300, c);
 int compteur;
 float aspectRatio;
 
-
 void drawSquare(int filled) 
 {
     if(filled) 
@@ -86,21 +83,13 @@ void drawSquare(int filled)
     glVertex2f( 0.5 , -0.5);
 
     glEnd();
-    glBegin(GL_LINE_LOOP);
-    //    eventuellement d’autres points ...
-    //    aspectRatio = WINDOW_WIDTH / (float) WINDOW_HEIGHT;
-    //    Vertex tabvertex[256];
-    //    for(int j=0;j<compteur; j++){
-    //        glColor3f(1, 0, 1);
-    //        glVertex2f(tabvertex[j].x, tabvertex[j].y);
-    //        GL_LINE_LOOP;
-    //    }
-        glEnd();
 } 
 
 int main(int argc, char** argv) 
 {
+    /* Déclaration du type tableau Vertex */
     Vertex tabvertex[256];
+
     /* Initialisation de la SDL */
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0) 
@@ -117,19 +106,13 @@ int main(int argc, char** argv)
     /* Ouverture d'une fenetre et creation d'un contexte OpenGL */
     SDL_Window* window;
     {
-        window = SDL_CreateWindow(
-        "",
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        WINDOW_WIDTH, WINDOW_HEIGHT,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-        SDL_SetWindowTitle(window, "TWA");
+        window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+        SDL_SetWindowTitle(window, "TMWA");
 
         if(NULL == window) 
         {
             const char* error = SDL_GetError();
-            fprintf(
-                stderr,
-                "Erreur lors de la creation de la fenetre : %s\n", error);
+            fprintf(stderr, "Erreur lors de la creation de la fenetre : %s\n", error);
 
             SDL_Quit();
             return EXIT_FAILURE;
@@ -148,26 +131,26 @@ int main(int argc, char** argv)
         if(NULL == context) 
         {
             const char* error = SDL_GetError();
-            fprintf(
-                stderr,
-                "Erreur lors de la creation du contexte OpenGL : %s\n", error);
+            fprintf(stderr, "Erreur lors de la creation du contexte OpenGL : %s\n", error);
 
             SDL_DestroyWindow(window);
             SDL_Quit();
             return EXIT_FAILURE;
         }
     }
-/* Déclaration du type tableau Vertex */
 
-    /* Boucle principale */
+
+    /*** BOUCLE DE JEU ***/
+
     int loop = 1;
     while(loop) 
     {
+        /*** SDL ***/
+
         /* Recuperation du temps au debut de la boucle */
         Uint32 startTime = SDL_GetTicks();
-        /* Placer ici le code de dessin */
 
-        
+        /* Placer ici le code de dessin */
 
         glColor3f(c.r, c.g, c.b);
         drawSquare(1);
@@ -194,12 +177,14 @@ int main(int argc, char** argv)
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
                     Vertex vertex;
                     aspectRatio = WINDOW_WIDTH / (float) WINDOW_HEIGHT;
+
                 if (aspectRatio > 1){   
                     vertex.x=(-1 + 2. * e.button.x / (float) WINDOW_WIDTH) * (GL_VIEW_SIZE / 2)*aspectRatio;
                     vertex.y=-(-1 + 2. * e.button.y / (float) WINDOW_HEIGHT) * (GL_VIEW_SIZE / 2);
                     tabvertex[compteur]=vertex;
                     compteur++;
                 }
+
                 else {
                     vertex.x=(-1 + 2. * e.button.x / (float) WINDOW_WIDTH) * (GL_VIEW_SIZE / 2);
                     vertex.y=-(-1 + 2. * e.button.y / (float) WINDOW_HEIGHT) * (GL_VIEW_SIZE / 2)/aspectRatio;
@@ -209,7 +194,6 @@ int main(int argc, char** argv)
 
                     break;
 
-                
                 /* Touche clavier */
                 case SDL_KEYDOWN:
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
@@ -219,6 +203,7 @@ int main(int argc, char** argv)
                         glScalef(5.,5.,5.);
                     }
                     break;
+
                 default:
                     break;
             }
@@ -226,6 +211,7 @@ int main(int argc, char** argv)
 
         /* Calcul du temps ecoule */
         Uint32 elapsedTime = SDL_GetTicks() - startTime;
+        
         /* Si trop peu de temps s'est ecoule, on met en pause le programme */
         if(elapsedTime < FRAMERATE_MILLISECONDS) 
         {
