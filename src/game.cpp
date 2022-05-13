@@ -79,14 +79,6 @@ class Quad
     Color color;
 };
 
-class Map
-{
-    public:
-    Quad q1;
-    Quad q2;
-    int width;
-    int height;
-};
 
 class Player
 {
@@ -298,19 +290,17 @@ int main(int argc, char** argv)
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
                     
                     if(e.key.keysym.sym == SDLK_LEFT) {
-                        p.player.pos.x--;
+                        p.player.pos.x-=0.1;
                         printf("position joueur : x:%f y:%f\n", p.player.pos.x, p.player.pos.y);
-
-                        glTranslatef(-1.,0,0);
-
-                        
                     }
 
                     else if(e.key.keysym.sym == SDLK_RIGHT) {
-                        p.player.pos.x++;
-                        printf("position joueur : x:%f y:%f\n", p.player.pos.x, p.player.pos.y);
-                        
-                        glTranslatef(1.,0,0);
+                        p.player.pos.x+=0.1;
+                        printf("position joueur : x:%f y:%f\n", p.player.pos.x, p.player.pos.y);  
+                    }
+
+                    else if(e.key.keysym.sym == SDLK_SPACE) {
+                        p.player.pos.y+=0.1;
                     }
 
                     break;
