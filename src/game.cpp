@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <math.h> 
 
-// Pour relancer vite, Dans TD02 make ex01 puis bin/td02_ex01.out
-
 /* Dimensions de la fenetre SDL_WINDOW_RESIZABLE */
 static const unsigned int WINDOW_WIDTH = 1920;
 static const unsigned int WINDOW_HEIGHT = 1080;
@@ -15,7 +13,28 @@ static const unsigned int WINDOW_HEIGHT = 1080;
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
 
 /* Espace fenêtre virtuelle */
-static const float GL_VIEW_SIZE = 2.;
+static const float GL_VIEW_SIZE = 40.;
+
+void onWindowResized(unsigned int width, unsigned int height)
+{ 
+    float aspectRatio = width / (float) height;
+
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    if( aspectRatio > 1) 
+    {
+        gluOrtho2D(
+        -GL_VIEW_SIZE / 2. * aspectRatio, GL_VIEW_SIZE / 2. * aspectRatio, 
+        -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.);
+    }
+    else
+    {
+        gluOrtho2D(
+        -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.,
+        -GL_VIEW_SIZE / 2. / aspectRatio, GL_VIEW_SIZE / 2. / aspectRatio);
+    }
+}
 
 // Structures
 typedef struct {
@@ -49,6 +68,7 @@ Color ini_color( int r, int g, int b){
 class Quad
 {
     public:
+
     Quad(Vertex p, int w, int h, Color c)
         : pos(p), width(w), height(h), color(c)
     {}
@@ -61,6 +81,7 @@ class Quad
 
 class Map
 {
+    public:
     Quad q1;
     Quad q2;
     int width;
@@ -69,8 +90,14 @@ class Map
 
 class Player
 {
+    public:
+    Player(Quad q, char c, int s)
+        : player(q), name(c), speed(s)
+    {}
+
+    Quad player;
+    char name;
     int speed;
-    
 };
 
 // test 
@@ -78,11 +105,31 @@ class Player
 Vertex posi = ini_vertex(0,0);
 Color c = ini_color(0,150,150);
 Quad q = Quad(posi, 10,10, c);
-Player p;
 
+Player p = Player(q, 'T', 1);
 
 int compteur;
 float aspectRatio;
+
+void drawOrigin() 
+{
+    float currentColor[4];
+    glGetFloatv(GL_CURRENT_COLOR,currentColor);
+
+    glBegin(GL_LINES);
+
+    glColor3f(1., 0., 0.);
+    glVertex2f( p.player.pos.x , p.player.pos.y);
+    glVertex2f( p.player.pos.x+1.0 , p.player.pos.y);
+
+    glColor3f(0., 1., 0.);
+    glVertex2f( p.player.pos.x , p.player.pos.y);
+    glVertex2f( p.player.pos.x , p.player.pos.y+1.0);
+
+    glEnd();
+
+    glColor3fv(currentColor);
+}
 
 void drawSquare(int filled) 
 {
@@ -102,7 +149,26 @@ void drawSquare(int filled)
     
 
     glEnd();
-} 
+}
+
+void drawQuad(Quad q, int filled) 
+{
+    if(filled) 
+    {
+        glBegin(GL_TRIANGLE_FAN);
+    }
+    else 
+    {
+        glBegin(GL_LINE_STRIP);
+    }
+
+    glVertex2f( q.width/2 + q.pos.x, q.height/2 + q.pos.y);
+    glVertex2f( q.width/2 + q.pos.x, -q.height/2+ q.pos.y);
+    glVertex2f( -q.width/2 + q.pos.x, -q.height/2+ q.pos.y);
+    glVertex2f( -q.width/2 + q.pos.x, q.height/2+ q.pos.y);
+
+    glEnd();
+}
 
 int main(int argc, char** argv) 
 {
@@ -116,9 +182,7 @@ int main(int argc, char** argv)
     if(SDL_Init(SDL_INIT_VIDEO) < 0) 
     {
         const char* error = SDL_GetError();
-        fprintf(
-            stderr, 
-            "Erreur lors de l'intialisation de la SDL : %s\n", error);
+        fprintf(stderr, "Erreur lors de l'intialisation de la SDL : %s\n", error);
 
         SDL_Quit();
         return EXIT_FAILURE;
@@ -161,6 +225,8 @@ int main(int argc, char** argv)
     }
 
 
+    onWindowResized(WINDOW_WIDTH, WINDOW_HEIGHT);
+    
     /*** BOUCLE DE JEU ***/
 
     int loop = 1;
@@ -170,14 +236,19 @@ int main(int argc, char** argv)
 
         /* Recuperation du temps au debut de la boucle */
         Uint32 startTime = SDL_GetTicks();
-
+        
         /* Placer ici le code de dessin */
+        glClear(GL_COLOR_BUFFER_BIT);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
-        glColor3f(q.color.r, q.color.g, q.color.b);
+        glColor3f(p.player.color.r, p.player.color.g, p.player.color.b);
         glPushMatrix();
-            glTranslatef(q.pos.x, q.pos.y, 0.);
+            //glTranslatef(p.player.pos.x, p.player.pos.y, 0.);
             //glScalef(q.width, q.height, 1.);
-            drawSquare(1);
+
+            drawQuad(p.player, 1);
+            drawOrigin();
         glPopMatrix();
         
         
@@ -225,11 +296,23 @@ int main(int argc, char** argv)
                 /* Touche clavier */
                 case SDL_KEYDOWN:
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
-                    if(e.key.keysym.sym == SDLK_a) {
-                        glMatrixMode(GL_MODELVIEW);
-                        glLoadIdentity();
-                        glScalef(5.,5.,5.);
+                    
+                    if(e.key.keysym.sym == SDLK_LEFT) {
+                        p.player.pos.x--;
+                        printf("position joueur : x:%f y:%f\n", p.player.pos.x, p.player.pos.y);
+
+                        glTranslatef(-1.,0,0);
+
+                        
                     }
+
+                    else if(e.key.keysym.sym == SDLK_RIGHT) {
+                        p.player.pos.x++;
+                        printf("position joueur : x:%f y:%f\n", p.player.pos.x, p.player.pos.y);
+                        
+                        glTranslatef(1.,0,0);
+                    }
+
                     break;
 
                 default:
@@ -247,6 +330,8 @@ int main(int argc, char** argv)
         {
             SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
         }
+
+        
     }
 
     /*** FIN DU JEU ***/
