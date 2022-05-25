@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 
-
+#include "map.h"
 #include "geometry.h"
 #include "player.h"
 #include "graphics.h"
@@ -27,7 +27,7 @@ Player p = Player(posi, 5, 5, c, 'T', posi, posi);
 Vect tabvertex[256];
 int compteur;
 float aspectRatio;
-
+Map map(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 int main(int argc, char** argv) 
 {   
@@ -72,11 +72,11 @@ int main(int argc, char** argv)
             //glTranslatef(p.player.pos.x, p.player.pos.y, 0.);
             //glScalef(q.width, q.height, 1.);
 
-        drawBloc(p, 1);
+        p.drawBloc(1);
         drawOrigin(p);
         glPopMatrix();
-        
-        
+        map.displayMap();
+
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
         

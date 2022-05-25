@@ -1,11 +1,11 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
-#include "quad.h"
+#include "bloc.h"
 
 typedef struct Quadtree{
     
-    Quad* platforms;
+    Bloc* platforms;
 
     int xmin, xmax, ymin, ymax;
 
@@ -16,8 +16,8 @@ typedef struct Quadtree{
 
     // Method
 
-    void generate(Quad* map);
-    Quad* searchLeaf(float x, float y);
+    void generate(Bloc* map);
+    Bloc* searchLeaf(float x, float y);
 
 } Quadtree;
 

@@ -1,23 +1,20 @@
 #ifndef MAP_H
 #define MAP_H
-
+#include <vector>
 #include "player.h"
+#include "bloc.h"
 
 class Map
 {
     public:
     // Methods
-    Map(int id, int width, int height, Bloc* platforms, Player* players)
-    	: id_(id), width_(width), height_(height), platforms_(platforms), players_(players)
-    	{ // conditions s'il y en a 
-        }
-	
-    int id_;
+    Map(int width, int height);
+    void displayMap();
+
     int width_;
     int height_;
-    Bloc * platforms_;
-    Player * players_;
-    
+    std::vector<Bloc> platforms_;
+
 };
 
 

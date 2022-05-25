@@ -45,26 +45,8 @@ void drawSquare(int filled)
     glEnd();
 }
 
-void drawQuad(Quad q, int filled) 
-{
-    if(filled) 
-    {
-        glBegin(GL_TRIANGLE_FAN);
-    }
-    else 
-    {
-        glBegin(GL_LINE_STRIP);
-    }
 
-    glVertex2f( q.width/2 + q.pos.x, q.height/2 + q.pos.y);
-    glVertex2f( q.width/2 + q.pos.x, -q.height/2+ q.pos.y);
-    glVertex2f( -q.width/2 + q.pos.x, -q.height/2+ q.pos.y);
-    glVertex2f( -q.width/2 + q.pos.x, q.height/2+ q.pos.y);
-
-    glEnd();
-}
-
-// Old quad.h
+// Old Bloc.h
 // Utilisable pour afficher des textures par exemple
 // Utilisable comme plateformes
 
