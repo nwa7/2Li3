@@ -1,28 +1,19 @@
 CC = g++
-CFLAGS	= -Wall -O2 -g
-LDFLAGS = -lSDL2 -lGLU -lGL -lm
+CXXFLAGS = -g -Wall -Wextra
+CPPFLAGS = -MMD
+LDFLAGS = $(shell pkg-config --cflags --libs sdl2) -lGL -lGLU -lm
 
-BINDIR	= bin/
-SRCDIR	= src/
-OBJDIR	= obj/
 
-# Fichiers
-OBJ_GAME= game.o
-EXEC_GAME= game.out
+SRC = $(wildcard *.cpp)
+OBJ = $(SRC:.cpp=.o)
+DEP = $(SRC:.cpp=.d)
+BIN = main
 
-# Regles de compilation
+all : $(OBJ)
+	$(CC) $^ $(LDFLAGS) -o $(BIN)
 
-all :
 
-game : $(OBJDIR)$(OBJ_GAME)
-	$(CC) $(CFLAGS) $(OBJDIR)$(OBJ_GAME) -o $(BINDIR)$(EXEC_GAME) $(LDFLAGS)
+-include $(DEP)
 
 clean :
-	rm -rf *~
-	rm -rf $(SRCDIR)*/*~
-	rm -rf $(OBJDIR)
-	rm -rf $(BINDIR)*
-
-$(OBJDIR)%.o: $(SRCDIR)%.cpp
-	mkdir -p `dirname $@`
-	$(CC) -o $@ -c $< $(CFLAGS)
+	$(RM) $(BIN) $(OBJ) $(DEP)

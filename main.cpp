@@ -3,7 +3,9 @@
 #include <GL/glu.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h> 
+#include <math.h>
+
+#include "player.h"
 
 /* Dimensions de la fenetre SDL_WINDOW_RESIZABLE */
 static const unsigned int WINDOW_WIDTH = 1920;
@@ -36,69 +38,12 @@ void onWindowResized(unsigned int width, unsigned int height)
     }
 }
 
-// Structures
-typedef struct {
-    float x;
-    float y;
-} Vertex;
-
-typedef struct{
-    int r;
-    int g;
-    int b;
-} Color;
-
-// Fonctions des tructures
-Vertex ini_vertex (float x, float y){
-    Vertex new_v;
-    new_v.x=x;
-    new_v.y=y;
-    return new_v;
-};
-
-Color ini_color( int r, int g, int b){
-    Color new_c;
-    new_c.r = r;
-    new_c.g = g;
-    new_c.b = b;
-    return new_c;
-};
-
-// Classes
-class Quad
-{
-    public:
-
-    Quad(Vertex p, int w, int h, Color c)
-        : pos(p), width(w), height(h), color(c)
-    {}
- 
-    Vertex pos;
-    int width;
-    int height;
-    Color color;
-};
-
-
-class Player
-{
-    public:
-    Player(Quad q, char c, int s)
-        : player(q), name(c), speed(s)
-    {}
-
-    Quad player;
-    char name;
-    int speed;
-};
-
 // test 
 
-Vertex posi = ini_vertex(0,0);
-Color c = ini_color(0,150,150);
-Quad q = Quad(posi, 10,10, c);
+Vect posi = {0, 0};
+Color c = {0, 150, 150};
 
-Player p = Player(q, 'T', 1);
+Player p = Player(posi, 10, 10, c, 'T', posi, posi);
 
 int compteur;
 float aspectRatio;
@@ -111,12 +56,12 @@ void drawOrigin()
     glBegin(GL_LINES);
 
     glColor3f(1., 0., 0.);
-    glVertex2f( p.player.pos.x , p.player.pos.y);
-    glVertex2f( p.player.pos.x+1.0 , p.player.pos.y);
+    glVertex2f( p.pos.x , p.pos.y);
+    glVertex2f( p.pos.x+1.0 , p.pos.y);
 
     glColor3f(0., 1., 0.);
-    glVertex2f( p.player.pos.x , p.player.pos.y);
-    glVertex2f( p.player.pos.x , p.player.pos.y+1.0);
+    glVertex2f( p.pos.x , p.pos.y);
+    glVertex2f( p.pos.x , p.pos.y+1.0);
 
     glEnd();
 
@@ -167,7 +112,7 @@ int main(int argc, char** argv)
     /*** INITIALIZATION ***/
 
     /* Déclaration du type tableau Vertex */
-    Vertex tabvertex[256];
+    Vect tabvertex[256];
 
     /* Initialisation de la SDL */
 
@@ -234,12 +179,12 @@ int main(int argc, char** argv)
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        glColor3f(p.player.color.r, p.player.color.g, p.player.color.b);
+        glColor3f(p.color.r, p.color.g, p.color.b);
         glPushMatrix();
             //glTranslatef(p.player.pos.x, p.player.pos.y, 0.);
             //glScalef(q.width, q.height, 1.);
 
-            drawQuad(p.player, 1);
+            drawQuad(p, 1);
             drawOrigin();
         glPopMatrix();
         
@@ -266,7 +211,7 @@ int main(int argc, char** argv)
                 /* Clic souris */
                 case SDL_MOUSEBUTTONUP:
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-                    Vertex vertex;
+                    Vect vertex;
                     aspectRatio = WINDOW_WIDTH / (float) WINDOW_HEIGHT;
 
                 if (aspectRatio > 1){   
@@ -290,17 +235,17 @@ int main(int argc, char** argv)
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
                     
                     if(e.key.keysym.sym == SDLK_LEFT) {
-                        p.player.pos.x-=0.1;
-                        printf("position joueur : x:%f y:%f\n", p.player.pos.x, p.player.pos.y);
+                        p.pos.x-=0.1;
+                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
                     }
 
                     else if(e.key.keysym.sym == SDLK_RIGHT) {
-                        p.player.pos.x+=0.1;
-                        printf("position joueur : x:%f y:%f\n", p.player.pos.x, p.player.pos.y);  
+                        p.pos.x+=0.1;
+                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);  
                     }
 
                     else if(e.key.keysym.sym == SDLK_SPACE) {
-                        p.player.pos.y+=0.1;
+                        p.pos.y+=0.1;
                     }
 
                     break;
