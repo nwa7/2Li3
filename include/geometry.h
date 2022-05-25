@@ -1,16 +1,9 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
+#include "player.h"
 
-struct Color{
-    int r;
-    int g;
-    int b;
-    
-};
-
-struct Vect{
-    float x;
-    float y;
-};
+void drawOrigin(Player p);
+void drawSquare(int filled);
+void drawQuad(Quad q, int filled);
 
 #endif

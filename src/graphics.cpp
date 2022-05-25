@@ -1,12 +1,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <GL/gl.h>
+#include <GL/glu.h>
 
 #include "graphics.h"
 
 // REFAIRE LES 3 PREMIERES EN UNE SEULE FONCTION POUR CACHER LE COPIER COLLER
 
-/*
 void initSDL(){
 	if(SDL_Init(SDL_INIT_VIDEO) < 0){
 		printf("Error initializing : %s\n", SDL_GetError());
@@ -17,7 +17,7 @@ void initSDL(){
 SDL_Window* initWindow(int width, int height){
 	SDL_Window* w;
 
-	w = SDL_CreateWindow("Rectangle and Collision", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	w = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 	if (w==NULL){
 		printf("Error creating window : %s\n", SDL_GetError());
 		exit(12);
@@ -43,6 +43,32 @@ SDL_GLContext contextInit(SDL_Window* window){
 	return context;
 }
 
+static const float GL_VIEW_SIZE = 40.;
+
+void onWindowResized(unsigned int width, unsigned int height)
+{ 
+    float aspectRatio = width / (float) height;
+
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    if( aspectRatio > 1) 
+    {
+        gluOrtho2D(
+        -GL_VIEW_SIZE / 2. * aspectRatio, GL_VIEW_SIZE / 2. * aspectRatio, 
+        -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.);
+    }
+    else
+    {
+        gluOrtho2D(
+        -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.,
+        -GL_VIEW_SIZE / 2. / aspectRatio, GL_VIEW_SIZE / 2. / aspectRatio);
+    }
+}
+
+
+
+
 // Possibilite de mettre un rectangle en parametre pour afficher la texture directement dedans
 // Sinon possibilite de mettre des coordonnees
 void drawRect(GLuint texture, ...){
@@ -61,7 +87,7 @@ void drawRect(GLuint texture, ...){
 	glDisable(GL_TEXTURE_2D);
 }
 
-GLuint initializeTexure(std::string chemin){
+/* GLuint initializeTexure(std::string chemin){
 
 	SDL_Surface* img= IMG_Load(chemin.c_str());
 	if(img==NULL){
@@ -81,5 +107,4 @@ GLuint initializeTexure(std::string chemin){
 
 
 	return texture;
-}
-*/
+} */

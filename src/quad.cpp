@@ -1,5 +1,9 @@
 #include "quad.h"
 
+Quad::Quad(Vect p, int w, int h, Color c)
+    : pos(p), width(w), height(h), color(c)
+{}
+ 
 /***
 void Quad::setX(float x){
     this->x = x;
