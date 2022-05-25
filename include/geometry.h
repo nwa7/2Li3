@@ -4,6 +4,6 @@
 
 void drawOrigin(Player p);
 void drawSquare(int filled);
-void drawQuad(Quad q, int filled);
+void drawBloc(Bloc q, int filled);
 
 #endif

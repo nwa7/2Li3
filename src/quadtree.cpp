@@ -1,10 +1,10 @@
 #include "quadtree.h"
 
 
-void generate(Quad* map){
+void generate(Bloc* map){
     // Remplir
 }
 
-Quad* searchLeaf(float x, float y){
+Bloc* searchLeaf(float x, float y){
     // Remplir
 }

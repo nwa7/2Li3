@@ -1,14 +1,14 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "quad.h"
+#include "bloc.h"
 
 
-class Player : public Quad
+class Player : public Bloc
 {
     public:
     Player(Vect pos, int width, int height, Color color, char c, Vect a, Vect s)
-        : Quad::Quad(pos, width, height, color), name(c), acceleration(a), speed(s)
+        : Bloc::Bloc(pos, width, height, color), name(c), acceleration(a), speed(s)
     {}
 
     /*** Methods 

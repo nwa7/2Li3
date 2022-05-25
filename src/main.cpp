@@ -72,7 +72,7 @@ int main(int argc, char** argv)
             //glTranslatef(p.player.pos.x, p.player.pos.y, 0.);
             //glScalef(q.width, q.height, 1.);
 
-        drawQuad(p, 1);
+        drawBloc(p, 1);
         drawOrigin(p);
         glPopMatrix();
         
