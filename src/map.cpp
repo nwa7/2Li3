@@ -16,6 +16,7 @@ Map::Map(int width, int height)
     platforms_.push_back(Bloc({25,-15}, 10,1, {155, 0,155})); 
 }
 
+
 void Map::displayMap()
 {
     for(const auto& bloc: this->platforms_)
@@ -23,4 +24,9 @@ void Map::displayMap()
         glColor3f(bloc.color.r, bloc.color.g, bloc.color.b);
         bloc.drawBloc();
     }
+}
+// accès + simple aux blocs dans la map, il suffit d'écrire map[n] pour accéder au bloc n
+Bloc Map::operator[](int n)
+{
+    return this->platforms_[n];
 }

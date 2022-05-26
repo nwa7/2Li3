@@ -16,7 +16,7 @@ static const unsigned int WINDOW_WIDTH = 1920;
 static const unsigned int WINDOW_HEIGHT = 1080;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
-static const Uint32 FRAMERATE_MILLISECONDS = 1000/40;
+static const Uint32 FRAMERATE_MILLISECONDS = 1000/15;
 
 // tests 
 
@@ -24,7 +24,8 @@ Vect posi = {0, 0};
 Color c = {0, 150, 150};
 
 Player p = Player(posi, 5, 5, c, 'T', posi, posi);
-
+float x = 0;
+float y = 0;
 
 /* Déclaration du type tableau Vertex */
 Vect tabvertex[256];
@@ -65,15 +66,15 @@ int main(int argc, char** argv)
         
         /* Placer ici le code de dessin */
 
-        glColor3f(p.color.r, p.color.g, p.color.b);
         glPushMatrix();
-            //glTranslatef(p.player.pos.x, p.player.pos.y, 0.);
-            //glScalef(q.width, q.height, 1.);
 
-        p.drawBloc();
+        glTranslatef(x, y, 0.);
+            //glScalef(q.width, q.height, 1.);
         drawOrigin(p);
         map.displayMap();
-        glPopMatrix();
+        glPopMatrix();       
+        glColor3f(p.color.r, p.color.g, p.color.b); 
+        p.drawBloc();
 
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
@@ -103,12 +104,14 @@ int main(int argc, char** argv)
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
                     
                     if(e.key.keysym.sym == SDLK_LEFT) {
-                        p.pos.x-=0.1;
+                        //p.pos.x-=0.5;
+                        x+=0.5;
                         printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
                     }
 
                     else if(e.key.keysym.sym == SDLK_RIGHT) {
-                        p.pos.x+=0.1;
+                        //p.pos.x+=0.5;
+                        x-=0.5;
                         printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);  
                     }
 

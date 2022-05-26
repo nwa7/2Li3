@@ -10,6 +10,7 @@ class Map
     // Methods
     Map(int width, int height);
     void displayMap();
+    Bloc operator[](int n);
 
     int width_;
     int height_;
