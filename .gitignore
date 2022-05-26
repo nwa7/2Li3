@@ -2,5 +2,6 @@
 *.o
 *.out
 *.d
+*.txt
 .vscode
 main
