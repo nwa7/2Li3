@@ -15,6 +15,9 @@
 static const unsigned int WINDOW_WIDTH = 1920;
 static const unsigned int WINDOW_HEIGHT = 1080;
 
+/* Nombre minimal de millisecondes separant le rendu de deux images */
+static const Uint32 FRAMERATE_MILLISECONDS = 1000/40;
+
 // tests 
 
 Vect posi = {0, 0};
@@ -49,13 +52,11 @@ int main(int argc, char** argv)
     while(loop) 
     {
         glClear(GL_COLOR_BUFFER_BIT);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 		// Dessins
 
 		// Toute cette structure serait remplacable par un systeme plus vaste qui gererait l affichage des menus
-
 		SDL_GL_SwapWindow(window);
         /*** SDL ***/
 
@@ -63,19 +64,16 @@ int main(int argc, char** argv)
         Uint32 startTime = SDL_GetTicks();
         
         /* Placer ici le code de dessin */
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
 
         glColor3f(p.color.r, p.color.g, p.color.b);
         glPushMatrix();
             //glTranslatef(p.player.pos.x, p.player.pos.y, 0.);
             //glScalef(q.width, q.height, 1.);
 
-        p.drawBloc(1);
+        p.drawBloc();
         drawOrigin(p);
-        glPopMatrix();
         map.displayMap();
+        glPopMatrix();
 
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
@@ -124,6 +122,16 @@ int main(int argc, char** argv)
                     break;
             }
         }
+        
+        /* Calcul du temps ecoule */
+        Uint32 elapsedTime = SDL_GetTicks() - startTime;
+
+        if(elapsedTime < FRAMERATE_MILLISECONDS) 
+            {
+                SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
+            }
+
+        
     }
     /*** FIN DU JEU ***/
 

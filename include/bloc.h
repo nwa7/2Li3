@@ -9,7 +9,8 @@ class Bloc
     public:
 
     Bloc(Vect p, int w, int h, Color c);
-    void drawBloc(int filled) const;
+    void drawBloc() const;
+    
 
     Vect pos;
     int width;

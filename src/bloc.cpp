@@ -7,16 +7,22 @@ Bloc::Bloc(Vect p, int w, int h, Color c)
 {}
  
 
-void Bloc::drawBloc(int filled) const
+void Bloc::drawBloc() const
 {
-    if(filled) 
-    {
-        glBegin(GL_TRIANGLE_FAN);
-    }
-    else 
-    {
-        glBegin(GL_LINE_STRIP);
-    }
+    glBegin(GL_TRIANGLE_FAN);
+
+
+    glVertex2f( this->pos.x, this->pos.y);
+    glVertex2f( this->width + this->pos.x, this->pos.y);
+    glVertex2f( this->width + this->pos.x, this->height+ this->pos.y);
+    glVertex2f( this->pos.x, this->height+ this->pos.y);
+
+    glEnd();
+    
+    /*** centré sur le centre du bloc perso
+
+    glBegin(GL_TRIANGLE_FAN);
+
 
     glVertex2f( this->width/2 + this->pos.x, this->height/2 + this->pos.y);
     glVertex2f( this->width/2 + this->pos.x, -this->height/2+ this->pos.y);
@@ -24,6 +30,7 @@ void Bloc::drawBloc(int filled) const
     glVertex2f( -this->width/2 + this->pos.x, this->height/2+ this->pos.y);
 
     glEnd();
+    ***/
 }
 
 /***
