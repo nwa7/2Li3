@@ -1,7 +1,7 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
-#include "bloc.h"
+#include "bloc.hh"
 
 typedef struct Quadtree{
     

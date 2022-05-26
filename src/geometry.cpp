@@ -1,9 +1,7 @@
-
-
 #include <SDL2/SDL.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include "geometry.h"
+#include "geometry.hh"
 
 void drawOrigin(Player p) 
 {

@@ -6,10 +6,10 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "map.h"
-#include "geometry.h"
-#include "player.h"
-#include "graphics.h"
+#include "map.hh"
+#include "geometry.hh"
+#include "player.hh"
+#include "graphics.hh"
 
 
 static const unsigned int WINDOW_WIDTH = 1920;
@@ -21,9 +21,9 @@ static const Uint32 FRAMERATE_MILLISECONDS = 1000/15;
 // tests 
 
 Vect posi = {0, 0};
-Color c = {0, 150, 150};
+Color c = colors::blue;
 
-Player p = Player(posi, 5, 5, c, 'T', posi, posi);
+Player p = Player(posi, 5, 5, c, 0,'T', posi, posi);
 float x = 0;
 float y = 0;
 

@@ -1,8 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 #include <vector>
-#include "player.h"
-#include "bloc.h"
+#include "player.hh"
+#include "bloc.hh"
 
 class Map
 {

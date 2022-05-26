@@ -1,14 +1,14 @@
 #ifndef BLOC_H
 #define BLOC_H
 
-#include "color.h"
-#include "vect.h"
+#include "color.hh"
+#include "vect.hh"
 
 class Bloc
 {
     public:
 
-    Bloc(Vect p, int w, int h, Color c);
+    Bloc(Vect p, int w, int h, Color c, int animated);
     void drawBloc() const;
     
 
@@ -16,6 +16,7 @@ class Bloc
     int width;
     int height;
     Color color;
+    int animated;
 };
 
 

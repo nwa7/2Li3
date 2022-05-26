@@ -1,4 +1,4 @@
-#include "quadtree.h"
+#include "quadtree.hh"
 
 
 void generate(Bloc* map){

@@ -3,7 +3,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "graphics.h"
+#include "graphics.hh"
 
 // REFAIRE LES 3 PREMIERES EN UNE SEULE FONCTION POUR CACHER LE COPIER COLLER
 

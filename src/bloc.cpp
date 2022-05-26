@@ -1,9 +1,9 @@
 
 #include <GL/gl.h>
-#include "bloc.h"
+#include "bloc.hh"
 
-Bloc::Bloc(Vect p, int w, int h, Color c)
-    : pos(p), width(w), height(h), color(c)
+Bloc::Bloc(Vect p, int w, int h, Color c, int a)
+    : pos(p), width(w), height(h), color(c), animated(a)
 {}
  
 
@@ -11,6 +11,7 @@ void Bloc::drawBloc() const
 {
     glBegin(GL_TRIANGLE_FAN);
 
+    glColor3f(this->color.r, this->color.g, this->color.b);
 
     glVertex2f( this->pos.x, this->pos.y);
     glVertex2f( this->width + this->pos.x, this->pos.y);
