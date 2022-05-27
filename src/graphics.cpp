@@ -5,7 +5,6 @@
 
 #include "graphics.hh"
 
-// REFAIRE LES 3 PREMIERES EN UNE SEULE FONCTION POUR CACHER LE COPIER COLLER
 
 SDL_GLContext initGraphics(int width, int height, SDL_Window* window) {
 
@@ -31,44 +30,6 @@ SDL_GLContext initGraphics(int width, int height, SDL_Window* window) {
 	return context;
 
 }
-
-/***
-void initSDL(){
-	if(SDL_Init(SDL_INIT_VIDEO) < 0){
-		printf("Error initializing : %s\n", SDL_GetError());
-		exit(11);
-	}
-}
-
-SDL_Window* initWindow(int width, int height){
-	SDL_Window* w;
-
-	w = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-	if (w==NULL){
-		printf("Error creating window : %s\n", SDL_GetError());
-		exit(12);
-	}
-	return w;
-}
-
-SDL_GLContext contextInit(SDL_Window* window){
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	SDL_GLContext context = SDL_GL_CreateContext(window);
-
-	if(context == NULL){
-		printf("Error creating OpenGL context : %s\n", SDL_GetError());
-		SDL_DestroyWindow(window);
-		SDL_Quit();
-		exit(16);
-	}
-
-	return context;
-}
-***/
 
 static const float GL_VIEW_SIZE = 40.;
 

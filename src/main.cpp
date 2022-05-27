@@ -16,7 +16,8 @@ static const unsigned int WINDOW_WIDTH = 1920;
 static const unsigned int WINDOW_HEIGHT = 1080;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
-static const Uint32 FRAMERATE_MILLISECONDS = 1000/15;
+static const int FRAMERATE_MILLISECONDS = 1000/15;
+
 
 // tests 
 
@@ -67,19 +68,21 @@ int main(int argc, char** argv)
         /*** SDL ***/
 
         /* Recuperation du temps au debut de la boucle */
-        Uint32 startTime = SDL_GetTicks();
+        int startTime = SDL_GetTicks();
         
         /* Placer ici le code de dessin */
+
+        /* Calcul du temps ecoule */
+        int elapsedTime = SDL_GetTicks() - startTime;
 
         glPushMatrix();
 
         glTranslatef(x, y, 0.);
-        //glScalef(q.width, q.height, 1.);
         drawOrigin(p);
-        map.displayMap();
+        map.displayMap(elapsedTime);
+        p.drawBloc(elapsedTime);
         glPopMatrix();       
         glColor3f(p.color.r, p.color.g, p.color.b); 
-        p.drawBloc();
 
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
@@ -144,9 +147,6 @@ int main(int argc, char** argv)
             }
         }
         
-        /* Calcul du temps ecoule */
-        Uint32 elapsedTime = SDL_GetTicks() - startTime;
-
         if(elapsedTime < FRAMERATE_MILLISECONDS) 
             {
                 SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);

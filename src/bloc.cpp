@@ -1,12 +1,20 @@
 #include <GL/gl.h>
+#include <ctime>
 #include "bloc.hh"
+#include <iostream>
+
 
 Bloc::Bloc(Vect p, int w, int h, Color c, int a)
     : pos(p), width(w), height(h), color(c), animated(a)
 {} 
 
-void Bloc::drawBloc() const
+void Bloc::drawBloc(int time)
 {
+    if (this->animated != 0)
+    {
+        int cur_time = std::time(nullptr) % 9;
+        this->pos.y = cur_time > 4 ? 10 - cur_time : cur_time;
+    }
     glBegin(GL_TRIANGLE_FAN);
 
     glColor3f(this->color.r, this->color.g, this->color.b);
