@@ -10,6 +10,13 @@ class Bloc
 
     Bloc(Vect p, int w, int h, Color c, int animated);
     void drawBloc() const;
+
+    void setX(float x);
+    void setY(float y);
+    float getPosX();
+    float getPosY();
+    float getWidth();
+    float getHeight();
     
 
     Vect pos;

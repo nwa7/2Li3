@@ -1,11 +1,9 @@
-
 #include <GL/gl.h>
 #include "bloc.hh"
 
 Bloc::Bloc(Vect p, int w, int h, Color c, int a)
     : pos(p), width(w), height(h), color(c), animated(a)
-{}
- 
+{} 
 
 void Bloc::drawBloc() const
 {
@@ -34,29 +32,27 @@ void Bloc::drawBloc() const
     ***/
 }
 
-/***
+
 void Bloc::setX(float x){
-    this->x = x;
+    this->pos.x = x;
 }
 
-void Quad::setY(float y){
-    this->y = y;
+void Bloc::setY(float y){
+    this->pos.y = y;
 }
 
 float Bloc::getPosX(){
-    return this->x;
+    return this->pos.x;
 }
 
 float Bloc::getPosY(){
-    return this->y;
+    return this->pos.y;
 }
 
-float Bloc::getSizeX(){
-    return this->sizeX;
+float Bloc::getWidth(){
+    return this->width;
 }
 
-float Bloc::getSizeY(){
-    return this->sizeY;
+float Bloc::getHeight(){
+    return this->height;
 }
-
-***/
