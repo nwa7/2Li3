@@ -33,6 +33,26 @@ void Bloc::drawBloc() const
 }
 
 
+int BoundingBox::collide(BoundingBox other){
+
+    // Défini s'il y a une collision ou non 
+
+    if (this->upperLeft.x>other.downRight.x){
+        return NOCOLLISION;
+    }
+    if (this->upperLeft.y<other.downRight.x){
+        return NOCOLLISION;
+    }
+    if (this->downRight.x<other.upperLeft.x){
+        return NOCOLLISION;
+    }
+    if (this->downRight.y>other.upperLeft.y){
+        return NOCOLLISION;
+    }
+
+    return COLLISION;
+} 
+
 void Bloc::setX(float x){
     this->pos.x = x;
 }

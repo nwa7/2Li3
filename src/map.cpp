@@ -32,3 +32,7 @@ Bloc Map::operator[](int n)
 {
     return this->platforms_[n];
 }
+
+BoundingBox* Map::collide(BoundingBox box){
+
+}

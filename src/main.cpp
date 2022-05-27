@@ -22,9 +22,11 @@ static const Uint32 FRAMERATE_MILLISECONDS = 1000/15;
 // tests 
 
 Vect posi = {0, 0};
+
 Color c = colors::blue;
 
-Player p = Player(posi, 5, 5, c, 0,'T', posi, posi);
+Player p = Player({0,5}, 1, 1, c, 0,'T', posi, posi);
+//position du joueur-largeur-hauteur-couleur-
 float x = 0;
 float y = 0;
 
@@ -45,9 +47,12 @@ quad.insertBloc(test);
 
 int main(int argc, char** argv) 
 {   
-    initSDL();
-	SDL_Window* window = initWindow(1920, 1080);
-	SDL_GLContext glcontext = contextInit(window);
+	if(SDL_Init(SDL_INIT_VIDEO) < 0){
+		printf("Error initializing : %s\n", SDL_GetError());
+		exit(11);
+	}
+	SDL_Window* window = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH , WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+    SDL_GLContext glcontext = initGraphics(WINDOW_WIDTH , WINDOW_HEIGHT, window);
 
 	// Exemple de chargement de texture
 	// GLuint id = initializeTexure("lkdn.png");
@@ -79,7 +84,7 @@ int main(int argc, char** argv)
         glPushMatrix();
 
         glTranslatef(x, y, 0.);
-            //glScalef(q.width, q.height, 1.);
+        //glScalef(q.width, q.height, 1.);
         drawOrigin(p);
         map.displayMap();
         glPopMatrix();       
@@ -115,23 +120,36 @@ int main(int argc, char** argv)
                     
                     if(e.key.keysym.sym == SDLK_LEFT) {
                         //p.pos.x-=0.5;
-                        x+=0.5;
+                        p.command(LEFT);
+                        
+                        //x+=0.5;
                         printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
+                        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
                     }
 
                     else if(e.key.keysym.sym == SDLK_RIGHT) {
                         //p.pos.x+=0.5;
-                        x-=0.5;
-                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);  
+                       p.command(RIGHT);
+                        
+                        //x+=0.5;
+                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
+                        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
                     }
 
-                    else if(e.key.keysym.sym == SDLK_SPACE) {
-                        p.pos.y+=0.1;
+                    else if(e.key.keysym.sym == SDLK_UP) {
+                        p.command(UP);
+                        
+                        //x+=0.5;
+                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
+                        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
                     }
+
 
                     break;
 
                 default:
+                    
+                     
                     break;
             }
         }
@@ -143,9 +161,16 @@ int main(int argc, char** argv)
             {
                 SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
             }
+    startTime=elapsedTime;
 
-        
+    p.move(FRAMERATE_MILLISECONDS/1000.);
+    x=-p.pos.x;
+    y=-p.pos.y;
+    printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
+    printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
     }
+
+    
     /*** FIN DU JEU ***/
 
 

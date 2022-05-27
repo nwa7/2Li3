@@ -6,11 +6,8 @@
 #include <string>
 #include <GL/glu.h>
 
-void initSDL();
 
-SDL_Window* initWindow(int width, int height);
-
-SDL_GLContext contextInit(SDL_Window* window);
+SDL_GLContext initGraphics(int width, int height, SDL_Window* window);
 
 void onWindowResized(unsigned int width, unsigned int height);
 
