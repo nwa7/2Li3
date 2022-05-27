@@ -2,6 +2,12 @@
 #define PLAYER_H
 
 #include "bloc.hh"
+#include "map.hh"
+
+int const RIGHT=1;
+int const LEFT=2;
+int const UP=3;
+int const NONE=0;
 
 
 class Player : public Bloc
@@ -12,11 +18,17 @@ class Player : public Bloc
     {}
 
     /*** Methods 
-
+    
     void setAccX(float x);
     void moveAndCollide();
     int collision(Rectangle);
 ***/
+    void command(int direction);
+    void move(double dt);
+    //void move(float dt, Map map);
+
+    int hasOrder=0;
+    int hasCollision;
 
     char name;
     Vect acceleration;

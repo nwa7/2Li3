@@ -26,6 +26,26 @@ class Bloc
     int animated;
 };
 
+int const NOCOLLISION = 0; 
+int const COLLISION= 16;
 
+/*int const COLLISIONLEFT = 1;
+int const COLLISIONRIGHT = 2;
+int const COLLISIONUP = 4;
+int const COLLISIONDOWN = 8;*/
+
+
+class BoundingBox
+{
+    public:
+
+    Vect upperLeft;
+    Vect downRight;
+
+    int collide(BoundingBox other);
+
+};
+
+//dans la map il faut aussi une fonction collide pour pouvoir verifier que y a bien collision
 
 #endif
