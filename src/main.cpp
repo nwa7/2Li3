@@ -36,14 +36,14 @@ int compteur;
 float aspectRatio;
 Map map(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-
+/*
 Bloc* maap(posi, 10, 10, {0.1, 0.1, 0.5}, 0);
 Quadtree quad;
 quad.generate(maap);
 
 Bloc* test({-2,-2}, 1, 1, {0.8, 0.7, 0.5}, 0);
 quad.insertBloc(test);
-
+*/
 
 int main(int argc, char** argv) 
 {   
