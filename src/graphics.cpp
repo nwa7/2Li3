@@ -7,6 +7,32 @@
 
 // REFAIRE LES 3 PREMIERES EN UNE SEULE FONCTION POUR CACHER LE COPIER COLLER
 
+SDL_GLContext initGraphics(int width, int height, SDL_Window* window) {
+
+	if (window==NULL){
+		printf("Error creating window : %s\n", SDL_GetError());
+		exit(12);
+	}
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	SDL_GLContext context = SDL_GL_CreateContext(window);
+
+	if(context == NULL){
+		printf("Error creating OpenGL context : %s\n", SDL_GetError());
+		SDL_DestroyWindow(window);
+		SDL_Quit();
+		exit(16);
+	}
+
+	return context;
+
+}
+
+/***
 void initSDL(){
 	if(SDL_Init(SDL_INIT_VIDEO) < 0){
 		printf("Error initializing : %s\n", SDL_GetError());
@@ -42,6 +68,7 @@ SDL_GLContext contextInit(SDL_Window* window){
 
 	return context;
 }
+***/
 
 static const float GL_VIEW_SIZE = 40.;
 
@@ -65,8 +92,6 @@ void onWindowResized(unsigned int width, unsigned int height)
         -GL_VIEW_SIZE / 2. / aspectRatio, GL_VIEW_SIZE / 2. / aspectRatio);
     }
 }
-
-
 
 
 // Possibilite de mettre un rectangle en parametre pour afficher la texture directement dedans
