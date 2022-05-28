@@ -33,7 +33,7 @@ SDL_GLContext initGraphics(int width, int height, SDL_Window* window) {
 
 }
 
-static const float GL_VIEW_SIZE = 2.;
+static const float GL_VIEW_SIZE = 40.;
 
 void onWindowResized(unsigned int width, unsigned int height)
 { 
@@ -59,42 +59,42 @@ void onWindowResized(unsigned int width, unsigned int height)
 void fixeTexEcran() {
     glBegin(GL_QUADS);
 		glTexCoord2f(1.,1.);
-		glVertex2f(1.6,-1);
+		glVertex2f(32,-20);
 
 		glTexCoord2f(0.,1.);
-		glVertex2f(-1.6,-1);
+		glVertex2f(-32,-20);
 
 		glTexCoord2f(0.,0.);
-		glVertex2f(-1.6,1);
+		glVertex2f(-32,20);
 		
 		glTexCoord2f(1.,0.);
-		glVertex2f(1.6,1);
+		glVertex2f(32,20);
 	glEnd();
 }
 
 void fixeTexMot() {
     glBegin(GL_QUADS);
             glTexCoord2f(1.,1.);
-            glVertex2f(0.25,-0.09);
+            glVertex2f(5,-1.9);
 
             glTexCoord2f(0.,1.);
-            glVertex2f(-0.25,-0.09);
+            glVertex2f(-5,-1.9);
 
             glTexCoord2f(0.,0.);
-            glVertex2f(-0.25,0.09);
+            glVertex2f(-5,1.9);
             
             glTexCoord2f(1.,0.);
-            glVertex2f(0.25,0.09);
+            glVertex2f(5,1.9);
         glEnd();
 }
 
 void affichageMenu(int compteur, int option, GLuint tex1, GLuint tex2) {
 	// Affichage quand l'option est sélectionnée
 	if(compteur==option) {
-		glTranslatef(-0.03,0,0);
+		glTranslatef(-0.6,0,0);
 		glBindTexture(GL_TEXTURE_2D, tex1);
 		fixeTexMot();
-		glTranslatef(0.03,0,0);
+		glTranslatef(0.6,0,0);
 	}
 	// Si elle n'est pas sélectionnée
 	else {

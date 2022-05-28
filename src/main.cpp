@@ -18,7 +18,7 @@ static const unsigned int WINDOW_WIDTH = 1080;
 static const unsigned int WINDOW_HEIGHT = 720;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
-static const int FRAMERATE_MILLISECONDS = 1000/15;
+static const int FRAMERATE_MILLISECONDS = 1000/20;
 
 
 // TESTS
@@ -80,12 +80,16 @@ int main(int argc, char** argv)
 
     // Menu du début
     int begin = 1;
-    unsigned int compteur=0;
+    unsigned int compt=0;
 
     // Boucle de jeu
     int loop = 0;
 
+    // Fin du jeu
+    int end = 0;
+
     /*** MENU DEBUT JEU ***/
+
     while(begin) {
         glClear(GL_COLOR_BUFFER_BIT);
         glMatrixMode(GL_MODELVIEW);
@@ -101,20 +105,20 @@ int main(int argc, char** argv)
         fixeTexEcran();
 
         // Start
-        glTranslatef(0,0.15,0);
-        affichageMenu(compteur, 1, start, start_c);
+        glTranslatef(0,3,0);
+        affichageMenu(compt, 1, start, start_c);
 
         // Rules
-        glTranslatef(0,-0.2,0);
-        affichageMenu(compteur, 2, rules, rules_c);
+        glTranslatef(0,-4,0);
+        affichageMenu(compt, 2, rules, rules_c);
 
         // Credits
-        glTranslatef(0,-0.2,0);
-        affichageMenu(compteur, 3, credits, credits_c);
+        glTranslatef(0,-4,0);
+        affichageMenu(compt, 3, credits, credits_c);
 
         // Exit
-        glTranslatef(0,-0.2,0);
-        affichageMenu(compteur, 4, exit, exit_c);
+        glTranslatef(0,-4,0);
+        affichageMenu(compt, 4, exit, exit_c);
 
         // Detache texture & desactive texturing
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -170,12 +174,14 @@ int main(int argc, char** argv)
                     /*// Clic sur rules
                     else if(e.button.x < 584 && e.button.x > 497 && e.button.y < 391 && e.button.y > 356) {
                         ...;
-                    }
+                    }*/
 
                     // Clic sur credits
                     else if(e.button.x < 601 && e.button.x > 482 && e.button.y < 463 && e.button.y > 426) {
-                        ...;
-                    }*/
+                        begin = 0;
+                        loop = 0;
+                        end = 1;
+                    }
                     break;
                 
 
@@ -185,15 +191,15 @@ int main(int argc, char** argv)
 
                     // Flèche du haut
                     if(e.key.keysym.sym==SDLK_UP) {
-                        if(compteur > 1) {
-                            compteur--;
+                        if(compt > 1) {
+                            compt--;
                         }
                     }
 
                     // Flèche du bas
                     else if(e.key.keysym.sym==SDLK_DOWN) {
-                        if(compteur < 4) {
-                            compteur ++;
+                        if(compt < 4) {
+                            compt ++;
                         }
                     }
 
@@ -201,12 +207,12 @@ int main(int argc, char** argv)
                     else if(e.key.keysym.sym==SDLK_RETURN) {
 
                         //Entrer sur exit
-                        if(compteur == 4) {
+                        if(compt == 4) {
                             begin = 0;
                         }
 
                          //Entrer sur start
-                        else if(compteur == 1) {
+                        else if(compt == 1) {
                             begin = 0;
                             loop = 1;
                         }
@@ -214,12 +220,14 @@ int main(int argc, char** argv)
                         /*//Entrer sur rules
                         else if(compteur == 2) {
                             ...;
-                        }
+                        }*/
 
                         //Entrer sur credits
-                        else if(compteur == 3) {
-                            ...;
-                        }*/
+                        else if(compt == 3) {
+                            begin = 0;
+                            loop = 0;
+                            end = 1;
+                        }
                     }
                     break;
                     
@@ -234,37 +242,47 @@ int main(int argc, char** argv)
 
     while(loop) 
     {
+       /* Recuperation du temps au debut de la boucle */
+        int startTime = SDL_GetTicks();
+        
+        /* Calcul du temps ecoule */
+        int elapsedTime = SDL_GetTicks() - startTime;
+        
+        /*** SDL ***/
+
         glClear(GL_COLOR_BUFFER_BIT);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-		// Dessins
 
-		// Toute cette structure serait remplacable par un systeme plus vaste qui gererait l affichage des menus
-		SDL_GL_SwapWindow(window);
-        /*** SDL ***/
+        // Active texturing & attache texture au point de bind
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        /* Recuperation du temps au debut de la boucle */
-        int startTime = SDL_GetTicks();
-        
-        /* Placer ici le code de dessin */
-
-        /* Calcul du temps ecoule */
-        int elapsedTime = SDL_GetTicks() - startTime;
+        // Code de dessin 
 
         glPushMatrix();
-
-        glTranslatef(x, y, 0.);
-        drawOrigin(p);
-        map.displayMap(elapsedTime);
-        p.drawBloc(elapsedTime);
+            glTranslatef(x, y, 0.);
+            drawOrigin(p);
+            map.displayMap(elapsedTime);
+            p.drawBloc(elapsedTime);
         glPopMatrix();       
         glColor3f(p.color.r, p.color.g, p.color.b); 
+
+        // Detache texture & desactive texturing
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
 
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
         
         
         /* EVENTS */
+
+        if((int) p.pos.x == 21 && (int) p.pos.y == 1) {
+            loop = 0;
+            end = 1;
+        }
 
         SDL_Event e;
         while(SDL_PollEvent(&e)) 
@@ -329,13 +347,54 @@ int main(int argc, char** argv)
         p.move(FRAMERATE_MILLISECONDS/1000.);
         x=-p.pos.x;
         y=-p.pos.y;
+
+        /*
         printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
         printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
+        */
     }
 
     
     /*** FIN DU JEU ***/
 
+    if(end==1) {
+        glClear(GL_COLOR_BUFFER_BIT);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        
+        // Active texturing & attache texture au point de bind
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Fond d'écran
+        glBindTexture(GL_TEXTURE_2D, ecran_fin);
+        fixeTexEcran();
+
+        // Detache texture & desactive texturing
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+
+        // Mise a jour fenetre
+        SDL_GL_SwapWindow(window);
+        
+        while(end) {
+
+            SDL_Event e;
+            while(SDL_PollEvent(&e)) {
+                // Racourcis pour fermer fenetre
+                if(e.type == SDL_QUIT){
+                    end = 0;
+                    break;
+                }
+            
+                if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_ESCAPE)){
+                    end = 0; 
+                    break;
+                }
+            }
+        }
+    }
 
     /* Liberation des ressources associees a la SDL */
     SDL_GL_DeleteContext(glcontext);
