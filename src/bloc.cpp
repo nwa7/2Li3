@@ -33,25 +33,7 @@ void Bloc::drawBloc() const
 }
 
 
-int BoundingBox::collide(BoundingBox other){
 
-    // Défini s'il y a une collision ou non 
-
-    if (this->upperLeft.x>other.downRight.x){
-        return NOCOLLISION;
-    }
-    if (this->upperLeft.y<other.downRight.x){
-        return NOCOLLISION;
-    }
-    if (this->downRight.x<other.upperLeft.x){
-        return NOCOLLISION;
-    }
-    if (this->downRight.y>other.upperLeft.y){
-        return NOCOLLISION;
-    }
-
-    return COLLISION;
-} 
 
 void Bloc::setX(float x){
     this->pos.x = x;
@@ -75,4 +57,67 @@ float Bloc::getWidth(){
 
 float Bloc::getHeight(){
     return this->height;
+}
+
+
+BoundingBox::BoundingBox(Vect upperLeft, Vect downRight)
+    : upperLeft(upperLeft), downRight(downRight)
+    {};
+
+int BoundingBox::collide(BoundingBox other, float offsetx, float offsety){
+
+    // Défini s'il y a une collision ou non 
+
+    if (this->upperLeft.x>other.downRight.x + offsetx){
+        return NOCOLLISION;
+    }
+    if (this->upperLeft.y<other.downRight.y + offsety){
+        return NOCOLLISION;
+    }
+    if (this->downRight.x<other.upperLeft.x + offsetx){
+        return NOCOLLISION;
+    }
+    if (this->downRight.y>other.upperLeft.y + offsety){
+        return NOCOLLISION;
+    }
+
+    return COLLISION;
+};
+
+
+
+// Détermine quelle type de collision il peut y avoir. offsetx et offsety permettent de calculer la collision lorsque
+// le bounding box other est dans une position relative par rapport à this.
+Collision BoundingBox::collision_side(BoundingBox other, float offsetx, float offsety){
+    // Y a-t-il une collision ?
+    Collision collision;
+    if (this->collide(other, offsetx, offsety) == NOCOLLISION){
+        collision.result = NOCOLLISION;
+        return collision;
+    };
+    // Pour déterminer de quel côté la ou les collisions se trouvent,
+    // on coupe la box en 4 et on regarde qui touche
+    BoundingBox subBox = BoundingBox(this->upperLeft, {(this->upperLeft.x + this->downRight.x)/2., this->downRight.y});
+    if (subBox.collide(other , offsetx, offsety) == COLLISION){
+        collision.result += COLLISIONLEFT;
+        collision.xmin = other.downRight.x;
+    };
+    subBox = BoundingBox(this->upperLeft, {this->upperLeft.x,  (this->upperLeft.y +this->downRight.y)/2.});
+    if (subBox.collide(other, offsetx, offsety) == COLLISION){
+        collision.result += COLLISIONUP;
+        collision.ymax = other.downRight.y;
+    };
+    subBox = BoundingBox({(this->upperLeft.x + this->downRight.x)/2., this->upperLeft.y}, this->downRight);
+    if (subBox.collide(other, offsetx, offsety) == COLLISION){
+        collision.result += COLLISIONRIGHT;
+        collision.xmax = other.upperLeft.x;
+    };
+    subBox = BoundingBox({this->upperLeft.x, (this->upperLeft.y + this->downRight.y) / 2.}, this->downRight);
+    if (subBox.collide(other, offsetx, offsety) == COLLISION){
+        collision.result += COLLISIONDOWN;
+        collision.ymin = other.upperLeft.y;
+    };
+
+
+
 }
