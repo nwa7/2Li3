@@ -11,16 +11,17 @@
 #include "player.hh"
 #include "graphics.hh"
 #include "quadtree.hh"
+#include "fakesdlimage.hh"
 
 
-static const unsigned int WINDOW_WIDTH = 1920;
-static const unsigned int WINDOW_HEIGHT = 1080;
+static const unsigned int WINDOW_WIDTH = 1080;
+static const unsigned int WINDOW_HEIGHT = 720;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
 static const int FRAMERATE_MILLISECONDS = 1000/15;
 
 
-// tests 
+// TESTS
 
 Vect posi = {0, 0};
 
@@ -46,26 +47,191 @@ Bloc* test({-2,-2}, 1, 1, {0.8, 0.7, 0.5}, 0);
 quad.insertBloc(test);
 */
 
+
 int main(int argc, char** argv) 
 {   
-	if(SDL_Init(SDL_INIT_VIDEO) < 0){
+	/*** INITIALISATION SDL ***/
+
+    if(SDL_Init(SDL_INIT_VIDEO) < 0){
 		printf("Error initializing : %s\n", SDL_GetError());
 		exit(11);
 	}
 	SDL_Window* window = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH , WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
     SDL_GLContext glcontext = initGraphics(WINDOW_WIDTH , WINDOW_HEIGHT, window);
 
-	// Exemple de chargement de texture
-	// GLuint id = initializeTexure("lkdn.png");
+	/* TEXTURES */
+	GLuint ecran_debut = initTex("images/Ecran_jeu.png");
+    GLuint start_c = initTex("images/start_col.png");
+    GLuint start = initTex("images/start.png");
+    GLuint rules_c = initTex("images/rules_col.png");
+    GLuint rules = initTex("images/rules.png");
+    GLuint credits_c = initTex("images/credits_col.png");
+    GLuint credits = initTex("images/credits.png");
+    GLuint exit_c = initTex("images/exit_col.png");
+    GLuint exit = initTex("images/exit.png");
+    GLuint ecran_fin = initTex("images/Ecran_fin.png");
 
+    /* FENETRE */
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
-
-
     onWindowResized(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    /*** INITIALISATION BOUCLES ***/
+
+    // Menu du début
+    int begin = 1;
+    unsigned int compteur=0;
+
+    // Boucle de jeu
+    int loop = 0;
+
+    /*** MENU DEBUT JEU ***/
+    while(begin) {
+        glClear(GL_COLOR_BUFFER_BIT);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        // Active texturing & attache texture au point de bind
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Fond d'écran
+        glBindTexture(GL_TEXTURE_2D, ecran_debut);
+        fixeTexEcran();
+
+        // Start
+        glTranslatef(0,0.15,0);
+        affichageMenu(compteur, 1, start, start_c);
+
+        // Rules
+        glTranslatef(0,-0.2,0);
+        affichageMenu(compteur, 2, rules, rules_c);
+
+        // Credits
+        glTranslatef(0,-0.2,0);
+        affichageMenu(compteur, 3, credits, credits_c);
+
+        // Exit
+        glTranslatef(0,-0.2,0);
+        affichageMenu(compteur, 4, exit, exit_c);
+
+        // Detache texture & desactive texturing
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+
+        // Mise a jour fenetre
+        SDL_GL_SwapWindow(window);
+
+        /* EVENTS */
+        SDL_Event e;
+        while(SDL_PollEvent(&e)) {
+            // Racourcis pour fermer fenetre
+            if(e.type == SDL_QUIT){
+				begin = 0;
+				break;
+			}
+		
+			if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_ESCAPE)){
+				begin = 0; 
+				break;
+			}
+
+            switch(e.type) {
+                /* EVENTS FENETRE */
+                case SDL_WINDOWEVENT:
+                    switch (e.window.event) 
+                    {
+                        // Redimensionnement fenetre
+                        case SDL_WINDOWEVENT_RESIZED:
+                            onWindowResized(e.window.data1, e.window.data2);                
+                            break;
+
+                        default:
+                            break; 
+                    }
+                    break;
+
+                /* SAISIE SOURIS */
+                case SDL_MOUSEBUTTONUP:
+                    printf("clic en (%d, %d)\n", e.button.x, e.button.y);
+
+                    // Clic sur exit
+                    if(e.button.x < 571 && e.button.x > 508 && e.button.y < 535 && e.button.y > 498) {
+                        begin = 0;
+                    }
+
+                    // Clic sur start
+                    else if(e.button.x < 582 && e.button.x > 498 && e.button.y < 318 && e.button.y > 283) {
+                        begin = 0;
+                        loop = 1;
+                    }
+
+                    /*// Clic sur rules
+                    else if(e.button.x < 584 && e.button.x > 497 && e.button.y < 391 && e.button.y > 356) {
+                        ...;
+                    }
+
+                    // Clic sur credits
+                    else if(e.button.x < 601 && e.button.x > 482 && e.button.y < 463 && e.button.y > 426) {
+                        ...;
+                    }*/
+                    break;
+                
+
+                /* SAISIE CLAVIER */
+                case SDL_KEYDOWN:
+                    printf("touche pressee (code = %d)\n", e.key.keysym.sym);
+
+                    // Flèche du haut
+                    if(e.key.keysym.sym==SDLK_UP) {
+                        if(compteur > 1) {
+                            compteur--;
+                        }
+                    }
+
+                    // Flèche du bas
+                    else if(e.key.keysym.sym==SDLK_DOWN) {
+                        if(compteur < 4) {
+                            compteur ++;
+                        }
+                    }
+
+                    // Touche retour à la ligne
+                    else if(e.key.keysym.sym==SDLK_RETURN) {
+
+                        //Entrer sur exit
+                        if(compteur == 4) {
+                            begin = 0;
+                        }
+
+                         //Entrer sur start
+                        else if(compteur == 1) {
+                            begin = 0;
+                            loop = 1;
+                        }
+
+                        /*//Entrer sur rules
+                        else if(compteur == 2) {
+                            ...;
+                        }
+
+                        //Entrer sur credits
+                        else if(compteur == 3) {
+                            ...;
+                        }*/
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+        
+        }
+    }
+
 	/*** BOUCLE DE JEU ***/
 
-    int loop = 1;
     while(loop) 
     {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -146,28 +312,25 @@ int main(int argc, char** argv)
                         printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
                         printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
                     }
-
-
                     break;
 
                 default:
-                    
-                     
                     break;
             }
         }
         
         if(elapsedTime < FRAMERATE_MILLISECONDS) 
-            {
-                SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
-            }
-    startTime=elapsedTime;
+        {
+            SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
+        }
 
-    p.move(FRAMERATE_MILLISECONDS/1000.);
-    x=-p.pos.x;
-    y=-p.pos.y;
-    printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-    printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
+        startTime=elapsedTime;
+
+        p.move(FRAMERATE_MILLISECONDS/1000.);
+        x=-p.pos.x;
+        y=-p.pos.y;
+        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
+        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
     }
 
     
@@ -175,7 +338,8 @@ int main(int argc, char** argv)
 
 
     /* Liberation des ressources associees a la SDL */
-   // SDL_DestroyWindow(window);
+    SDL_GL_DeleteContext(glcontext);
+    SDL_DestroyWindow(window);
     SDL_Quit();
     
     return EXIT_SUCCESS;

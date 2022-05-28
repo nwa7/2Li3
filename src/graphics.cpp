@@ -4,6 +4,8 @@
 #include <GL/glu.h>
 
 #include "graphics.hh"
+#include "lodepng.hh"
+#include "fakesdlimage.hh"
 
 
 SDL_GLContext initGraphics(int width, int height, SDL_Window* window) {
@@ -31,7 +33,7 @@ SDL_GLContext initGraphics(int width, int height, SDL_Window* window) {
 
 }
 
-static const float GL_VIEW_SIZE = 40.;
+static const float GL_VIEW_SIZE = 2.;
 
 void onWindowResized(unsigned int width, unsigned int height)
 { 
@@ -54,43 +56,77 @@ void onWindowResized(unsigned int width, unsigned int height)
     }
 }
 
+void fixeTexEcran() {
+    glBegin(GL_QUADS);
+		glTexCoord2f(1.,1.);
+		glVertex2f(1.6,-1);
 
-// Possibilite de mettre un rectangle en parametre pour afficher la texture directement dedans
-// Sinon possibilite de mettre des coordonnees
-void drawRect(GLuint texture, ...){
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture(GL_TEXTURE_2D, texture);
+		glTexCoord2f(0.,1.);
+		glVertex2f(-1.6,-1);
 
-	glBegin(GL_QUADS);
+		glTexCoord2f(0.,0.);
+		glVertex2f(-1.6,1);
 		
-		// Remplir comme dans les TPs
-
+		glTexCoord2f(1.,0.);
+		glVertex2f(1.6,1);
 	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
 }
 
-/* GLuint initializeTexure(std::string chemin){
+void fixeTexMot() {
+    glBegin(GL_QUADS);
+            glTexCoord2f(1.,1.);
+            glVertex2f(0.25,-0.09);
 
+            glTexCoord2f(0.,1.);
+            glVertex2f(-0.25,-0.09);
+
+            glTexCoord2f(0.,0.);
+            glVertex2f(-0.25,0.09);
+            
+            glTexCoord2f(1.,0.);
+            glVertex2f(0.25,0.09);
+        glEnd();
+}
+
+void affichageMenu(int compteur, int option, GLuint tex1, GLuint tex2) {
+	// Affichage quand l'option est sélectionnée
+	if(compteur==option) {
+		glTranslatef(-0.03,0,0);
+		glBindTexture(GL_TEXTURE_2D, tex1);
+		fixeTexMot();
+		glTranslatef(0.03,0,0);
+	}
+	// Si elle n'est pas sélectionnée
+	else {
+		glBindTexture(GL_TEXTURE_2D, tex2);
+		fixeTexMot();
+	}
+}
+
+GLuint initTex(std::string chemin){
+
+	// Chargement de l'image
 	SDL_Surface* img= IMG_Load(chemin.c_str());
 	if(img==NULL){
 		exit(-1);
 	}
 
-
+	// Initialisation texture
 	GLuint texture;
-
-
 	glGenTextures(1,&texture);
+
+	// Fixation texture
     glBindTexture(GL_TEXTURE_2D,texture);
+
+	// Modifs texture
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+
+	// Envoi données sur GPU
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->w, img->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img->pixels);
 
+	// Libération
 	SDL_FreeSurface(img);
 
 
 	return texture;
-} */
+}

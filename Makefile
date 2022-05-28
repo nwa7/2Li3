@@ -1,7 +1,7 @@
 CC = g++
 CXXFLAGS = -g -Wall -Wextra
 CPPFLAGS = -MMD -Iinclude
-LDFLAGS = $(shell pkg-config --cflags --libs sdl2) -lGL -lGLU -lm
+LDFLAGS = $(shell pkg-config --cflags --libs sdl2) -lGL -lGLU -lm -lSDL2_image
 
 
 SRC = $(wildcard src/*.cpp)
