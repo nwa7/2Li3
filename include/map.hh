@@ -9,7 +9,7 @@ class Map
     public:
     // Methods
     Map(int width, int height);
-    void displayMap();
+    void displayMap(int time);
     Bloc operator[](int n);//ca schmoutz
     //faut faire un arbre pas une liste les bg
 

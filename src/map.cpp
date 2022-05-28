@@ -1,5 +1,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <stdlib.h>
 #include "map.hh"
 #include "bloc.hh"
 
@@ -14,17 +15,16 @@ Map::Map(int width, int height)
     platforms_.push_back(Bloc({15,-15}, 5,10, colors::purple,0)); 
     platforms_.push_back(Bloc({20,-15}, 5,5, colors::orange,0)); 
     platforms_.push_back(Bloc({25,-15}, 10,1, colors::yellow,0)); 
-    platforms_.push_back(Bloc({35,-15}, 10,15, colors::red,0)); 
-    platforms_.push_back(Bloc({20,-15}, 5,5, colors::blue,0)); 
-    platforms_.push_back(Bloc({25,-15}, 10,1, colors::green,0)); 
+    platforms_.push_back(Bloc({35,-15}, 20,10, colors::pink,0)); 
+    platforms_.push_back(Bloc({35,-5}, 10,3, colors::pink,1)); 
 }
 
 
-void Map::displayMap()
+void Map::displayMap(int time)
 {
-    for(const auto& bloc: this->platforms_)
+    for(auto& bloc: this->platforms_)
     {
-        bloc.drawBloc();
+        bloc.drawBloc(time);
     }
 }
 // accès + simple aux blocs dans la map, il suffit d'écrire map[n] pour accéder au bloc n

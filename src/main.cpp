@@ -10,13 +10,15 @@
 #include "geometry.hh"
 #include "player.hh"
 #include "graphics.hh"
+#include "quadtree.hh"
 
 
 static const unsigned int WINDOW_WIDTH = 1920;
 static const unsigned int WINDOW_HEIGHT = 1080;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
-static const Uint32 FRAMERATE_MILLISECONDS = 1000/15;
+static const int FRAMERATE_MILLISECONDS = 1000/15;
+
 
 // tests 
 
@@ -35,11 +37,23 @@ int compteur;
 float aspectRatio;
 Map map(WINDOW_WIDTH, WINDOW_HEIGHT);
 
+/*
+Bloc* maap(posi, 10, 10, {0.1, 0.1, 0.5}, 0);
+Quadtree quad;
+quad.generate(maap);
+
+Bloc* test({-2,-2}, 1, 1, {0.8, 0.7, 0.5}, 0);
+quad.insertBloc(test);
+*/
+
 int main(int argc, char** argv) 
 {   
-    initSDL();
-	SDL_Window* window = initWindow(1920, 1080);
-	SDL_GLContext glcontext = contextInit(window);
+	if(SDL_Init(SDL_INIT_VIDEO) < 0){
+		printf("Error initializing : %s\n", SDL_GetError());
+		exit(11);
+	}
+	SDL_Window* window = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH , WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+    SDL_GLContext glcontext = initGraphics(WINDOW_WIDTH , WINDOW_HEIGHT, window);
 
 	// Exemple de chargement de texture
 	// GLuint id = initializeTexure("lkdn.png");
@@ -64,19 +78,21 @@ int main(int argc, char** argv)
         /*** SDL ***/
 
         /* Recuperation du temps au debut de la boucle */
-        Uint32 startTime = SDL_GetTicks();
+        int startTime = SDL_GetTicks();
         
         /* Placer ici le code de dessin */
+
+        /* Calcul du temps ecoule */
+        int elapsedTime = SDL_GetTicks() - startTime;
 
         glPushMatrix();
 
         glTranslatef(x, y, 0.);
-        //glScalef(q.width, q.height, 1.);
         drawOrigin(p);
-        map.displayMap();
+        map.displayMap(elapsedTime);
+        p.drawBloc(elapsedTime);
         glPopMatrix();       
         glColor3f(p.color.r, p.color.g, p.color.b); 
-        p.drawBloc();
 
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
@@ -141,9 +157,6 @@ int main(int argc, char** argv)
             }
         }
         
-        /* Calcul du temps ecoule */
-        Uint32 elapsedTime = SDL_GetTicks() - startTime;
-
         if(elapsedTime < FRAMERATE_MILLISECONDS) 
             {
                 SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);

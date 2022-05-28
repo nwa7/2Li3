@@ -5,27 +5,14 @@
 
 #include "graphics.hh"
 
-// REFAIRE LES 3 PREMIERES EN UNE SEULE FONCTION POUR CACHER LE COPIER COLLER
 
-void initSDL(){
-	if(SDL_Init(SDL_INIT_VIDEO) < 0){
-		printf("Error initializing : %s\n", SDL_GetError());
-		exit(11);
-	}
-}
+SDL_GLContext initGraphics(int width, int height, SDL_Window* window) {
 
-SDL_Window* initWindow(int width, int height){
-	SDL_Window* w;
-
-	w = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-	if (w==NULL){
+	if (window==NULL){
 		printf("Error creating window : %s\n", SDL_GetError());
 		exit(12);
 	}
-	return w;
-}
 
-SDL_GLContext contextInit(SDL_Window* window){
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
@@ -41,6 +28,7 @@ SDL_GLContext contextInit(SDL_Window* window){
 	}
 
 	return context;
+
 }
 
 static const float GL_VIEW_SIZE = 40.;
@@ -65,8 +53,6 @@ void onWindowResized(unsigned int width, unsigned int height)
         -GL_VIEW_SIZE / 2. / aspectRatio, GL_VIEW_SIZE / 2. / aspectRatio);
     }
 }
-
-
 
 
 // Possibilite de mettre un rectangle en parametre pour afficher la texture directement dedans
