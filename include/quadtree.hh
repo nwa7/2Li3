@@ -2,6 +2,7 @@
 #define QUADTREE_H
 
 #include "bloc.hh"
+#include "player.hh"
 
 class Quadtree{
     
@@ -16,6 +17,9 @@ class Quadtree{
     Quadtree* downleft;
     Quadtree* upright;
     Quadtree* downright;
+
+    // constructeur
+    //Quadtree(Player p);
 
     void generate(Bloc* map);
     void split();

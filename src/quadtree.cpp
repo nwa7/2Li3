@@ -1,5 +1,20 @@
 #include "quadtree.hh"
 
+
+static const unsigned int WINDOW_WIDTH = 1920;
+static const unsigned int WINDOW_HEIGHT = 1080;
+
+
+//mieux pour générer le quadtree?
+/***
+Quadtree::Quadtree(Player p)
+:  xmin(0), ymin(0), xmax(WINDOW_WIDTH), ymax(WINDOW_HEIGHT), upleft(nullptr), upright(nullptr), downleft(nullptr),downright(nullptr)
+{
+    
+}
+***/
+
+
 void Quadtree::generate(Bloc* map){
 
     int subWidth = (int) (map->width/2);
