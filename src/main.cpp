@@ -39,7 +39,7 @@ float aspectRatio;
 Map map(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 /* Quadtree */
-
+Quadtree qt(0,0,0,0);
 
 int main(int argc, char** argv) 
 {   
@@ -241,6 +241,9 @@ int main(int argc, char** argv)
         
         /* Calcul du temps ecoule */
         int elapsedTime = SDL_GetTicks() - startTime;
+
+        /* Initialisation du niveau/quadtree */
+        qt.generate(&map);
         
         /*** SDL ***/
 

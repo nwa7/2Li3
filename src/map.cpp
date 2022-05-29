@@ -33,16 +33,13 @@ Map::Map(int width, int height)
 }
 
 
-void Map::displayMap(int time)
-{
-    for(auto& bloc: this->platforms_)
-    {
+void Map::displayMap(int time) {
+    for(auto& bloc: this->platforms_) {
         bloc.drawBloc(time);
     }
 }
 // accès + simple aux blocs dans la map, il suffit d'écrire map[n] pour accéder au bloc n
-Bloc Map::operator[](int n)
-{
+Bloc Map::operator[](int n) {
     return this->platforms_[n];
 }
 

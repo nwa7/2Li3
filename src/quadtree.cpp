@@ -5,16 +5,21 @@ Quadtree::Quadtree(int xmin, int xmax, int ymin, int ymax) :
     xmin(xmin), xmax(xmax), ymin(ymin), ymax(ymax) 
 {}
 
-void Quadtree::generate(Bloc* map){
+void Quadtree::generate(Map* map){
 
-    int subWidth = (int) (map->width/2);
-    int subHeight = (int) (map->height/2);
+    int subWidth = (int) (map->width_/2);
+    int subHeight = (int) (map->height_/2);
     
     // Initialisation racine
     this->xmin=-subWidth;
     this->xmax=subWidth;
     this->ymin=-subHeight;
     this->ymax=subHeight;
+
+    // Ajout blocs
+    for(Bloc bloc : map->platforms_) {
+            this->insertBloc(bloc);
+        }
 }
 
 /* Recup infos */
