@@ -38,46 +38,12 @@ float aspectRatio;
 
 
 /* Quadtree */
-Quadtree qt(0,0,0,0);
+Quadtree qt1(0,0,0,0);
+Quadtree qt2(0,0,0,0);
 
 
 int main(void) 
 {   
-    std::vector<Bloc> level_one;
-    level_one.push_back(Bloc({-30,-15}, 45,15, colors::green,0)); 
-    level_one.push_back(Bloc({15,-15}, 5,10, colors::purple,0)); 
-    level_one.push_back(Bloc({20,-15}, 5,5, colors::orange,0)); 
-    level_one.push_back(Bloc({25,-15}, 10,1, colors::yellow,0)); 
-    level_one.push_back(Bloc({35,-15}, 50,10, colors::blue,0)); 
-    level_one.push_back(Bloc({75,-2}, 10,3, colors::purple,1));
-    level_one.push_back(Bloc({53,-5}, 20,5, colors::orange,0));  
-    level_one.push_back(Bloc({85,-15}, 5,5, colors::yellow,0));
-    level_one.push_back(Bloc({90,-15}, 60,1, colors::green,0));  
-    level_one.push_back(Bloc({90,10}, 10,3, colors::red,0));  
-    level_one.push_back(Bloc({105,14}, 10,3, colors::green,0));  
-    level_one.push_back(Bloc({115,-12}, 15,20, colors::orange,0));  
-    level_one.push_back(Bloc({130,-12}, 18,2, colors::orange,0));
-    level_one.push_back(Bloc({148,-14}, 2,4, colors::orange,0));
-    level_one.push_back(Bloc({150,-15}, 7,17, colors::blue,0));
-    level_one.push_back(Bloc({152,2}, 5,22, colors::green,0));
-    level_one.push_back(Bloc({157,-15}, 7,20, colors::red,0));
-    level_one.push_back(Bloc({164,-15}, 7,23, colors::blue,0));
-    level_one.push_back(Bloc({171,-15}, 4,26, colors::purple,0));
-
-    Map map1(WINDOW_WIDTH, WINDOW_HEIGHT, level_one);
-
-    std::vector<Bloc> level_two;
-    level_two.push_back(Bloc({-30,-15}, 45,15, colors::blue,0)); 
-    level_two.push_back(Bloc({15,-15}, 5,10, colors::orange,0)); 
-    level_two.push_back(Bloc({20,-15}, 5,5, colors::purple,0)); 
-    level_two.push_back(Bloc({25,-15}, 10,1, colors::yellow,0)); 
-    level_two.push_back(Bloc({35,-15}, 50,10, colors::blue,0)); 
-    level_two.push_back(Bloc({53,-5}, 20,5, colors::orange,0));  
-    level_two.push_back(Bloc({85,-15}, 5,5, colors::yellow,0));
-    level_two.push_back(Bloc({90,-15}, 60,1, colors::green,0));  
-    level_two.push_back(Bloc({90,10}, 10,3, colors::red,0));  
-    Map map2(WINDOW_WIDTH, WINDOW_HEIGHT, level_two);
-
 	/*** INITIALISATION SDL ***/
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -87,91 +53,59 @@ int main(void)
 	SDL_Window* window = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH , WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
     SDL_GLContext glcontext = initGraphics(window);
 
-	/* TEXTURES */
-	GLuint ecran_debut = initTex("images/Ecran_jeu.png");
-    GLuint start_c = initTex("images/start_col.png");
-    GLuint start = initTex("images/start.png");
-    GLuint rules_c = initTex("images/rules_col.png");
-    GLuint rules = initTex("images/rules.png");
-    GLuint credits_c = initTex("images/credits_col.png");
-    GLuint credits = initTex("images/credits.png");
-    GLuint exit_c = initTex("images/exit_col.png");
-    GLuint exit = initTex("images/exit.png");
-    GLuint ecran_fin = initTex("images/Ecran_fin.png");
-
     /* FENETRE */
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
     onWindowResized(WINDOW_WIDTH, WINDOW_HEIGHT);
 
+    /* IMAGES */
+    GLuint textures[12];
+    textures[0] = initTex("images/Ecran_jeu.png");
+    textures[1] = initTex("images/Ecran_rules.png");
+    textures[2] = initTex("images/Ecran_credits.png");
+    textures[3] = initTex("images/start_col.png");
+    textures[4] = initTex("images/start.png");
+    textures[5] = initTex("images/rules_col.png");
+    textures[6] = initTex("images/rules.png");
+    textures[7] = initTex("images/credits_col.png");
+    textures[8] = initTex("images/credits.png");
+    textures[9] = initTex("images/exit_col.png");
+    textures[10] = initTex("images/exit.png");
+    textures[11] = initTex("images/Ecran_fin.png");
 
     /*** INITIALISATION BOUCLES ***/
 
     // Menu du début
     int begin = 1;
+    int menu = 0;
     unsigned int compt=0;
 
     // Boucle de jeu
     int loop = 0;
-
-    // niveau
     int niveau = 1;
 
     // Fin du jeu
     int end = 0;
 
+
     /*** MENU DEBUT JEU ***/
 
     while(begin) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        // Affichage choix menu
+        chooseMenu(window,textures,menu, compt);
 
-        // Active texturing & attache texture au point de bind
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        // Fond d'écran
-        glBindTexture(GL_TEXTURE_2D, ecran_debut);
-        fixeTexEcran();
-
-        // Start
-        glTranslatef(0,3,0);
-        affichageMenu(compt, 1, start, start_c);
-
-        // Rules
-        glTranslatef(0,-4,0);
-        affichageMenu(compt, 2, rules, rules_c);
-
-        // Credits
-        glTranslatef(0,-4,0);
-        affichageMenu(compt, 3, credits, credits_c);
-
-        // Exit
-        glTranslatef(0,-4,0);
-        affichageMenu(compt, 4, exit, exit_c);
-
-        // Detache texture & desactive texturing
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-
-        // Mise a jour fenetre
-        SDL_GL_SwapWindow(window);
-
-        /* EVENTS */
+        // Choix du menu
         SDL_Event e;
         while(SDL_PollEvent(&e)) {
-            // Racourcis pour fermer fenetre
+        // Racourcis pour fermer fenetre
             if(e.type == SDL_QUIT){
-				begin = 0;
-				break;
-			}
-		
-			if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_ESCAPE)){
-				begin = 0; 
-				break;
-			}
+                begin = 0;
+                break;
+            }
+            if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_ESCAPE)){
+                begin = 0; 
+                break;
+            }
 
             switch(e.type) {
                 /* EVENTS FENETRE */
@@ -186,39 +120,39 @@ int main(void)
                         default:
                             break; 
                     }
-                    break;
+                break;
 
                 /* SAISIE SOURIS */
                 case SDL_MOUSEBUTTONUP:
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
+
                     // Clic sur exit
                     if(e.button.x < 571 && e.button.x > 508 && e.button.y < 535 && e.button.y > 498) {
                         begin = 0;
                     }
-
                     // Clic sur start
                     else if(e.button.x < 582 && e.button.x > 498 && e.button.y < 318 && e.button.y > 283) {
                         begin = 0;
                         loop = 1;
                     }
-
-                    /*// Clic sur rules
+                    // Clic sur rules
                     else if(e.button.x < 584 && e.button.x > 497 && e.button.y < 391 && e.button.y > 356) {
-                        ...;
-                    }*/
-
+                        menu = 2;
+                    }
                     // Clic sur credits
                     else if(e.button.x < 601 && e.button.x > 482 && e.button.y < 463 && e.button.y > 426) {
-                        begin = 0;
-                        loop = 0;
-                        end = 1;
+                        menu = 3;
                     }
-                    break;
+                break;
                 
-
                 /* SAISIE CLAVIER */
                 case SDL_KEYDOWN:
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
+
+                    // m pour retourner au menu principal
+                    if(e.key.keysym.sym==SDLK_m) {
+                        menu = 0;
+                    }
 
                     // Flèche du haut
                     if(e.key.keysym.sym==SDLK_UP) {
@@ -226,7 +160,6 @@ int main(void)
                             compt--;
                         }
                     }
-
                     // Flèche du bas
                     else if(e.key.keysym.sym==SDLK_DOWN) {
                         if(compt < 4) {
@@ -236,44 +169,44 @@ int main(void)
 
                     // Touche retour à la ligne
                     else if(e.key.keysym.sym==SDLK_RETURN) {
-
                         //Entrer sur exit
                         if(compt == 4) {
                             begin = 0;
                         }
-
-                         //Entrer sur start
+                        //Entrer sur start
                         else if(compt == 1) {
                             begin = 0;
                             loop = 1;
                         }
-
-                        /*//Entrer sur rules
-                        else if(compteur == 2) {
-                            ...;
-                        }*/
-
+                        //Entrer sur rules
+                        else if(compt == 2) {
+                            menu = 2;
+                        }
                         //Entrer sur credits
                         else if(compt == 3) {
-                            begin = 0;
-                            loop = 0;
-                            end = 1;
-                        }
+                            menu = 3;
+                        } 
                     }
-                    break;
+                break;
                     
                 default:
-                    break;
+                break;
             }
-        
         }
+            
+
     }
 
 	/*** BOUCLE DE JEU ***/
 
-    /* Initialisation du niveau/quadtree */
-    qt.generate(&map);
+    /* Initialisation du quadtree et de la map */
+    Map map1(WINDOW_WIDTH,WINDOW_HEIGHT);
+    map1.loadLvl(1);
+    qt1.generate(&map1);
 
+    Map map2(WINDOW_WIDTH,WINDOW_HEIGHT);
+    map2.loadLvl(2);
+    qt2.generate(&map2);
         
     while(loop) 
     {
@@ -300,13 +233,12 @@ int main(void)
         glPushMatrix();
             glTranslatef(x, y, 0.);
             drawOrigin();
-        if (niveau==1)
-        {
-            map1.displayMap();       
-        }
-        if (niveau==2){
-            map2.displayMap();      
-        }
+            if(niveau == 1) {
+                map1.displayMap();
+            }
+            else if(niveau == 2) {
+                map2.displayMap();
+            }   
             p.drawBloc();
         glPopMatrix();       
         glColor3f(p.color.r, p.color.g, p.color.b); 
@@ -316,17 +248,24 @@ int main(void)
         
         
         /* EVENTS */
+        
+        // Niveau 1 terminé, passage au niveau 2
+        if(niveau==1 && (int) p.pos.x == 21 && (int) p.pos.y == 1) {
+            niveau = 2;
+        }
 
-        if((int) p.pos.x == 21 && (int) p.pos.y == 1) {
+        // Niveau 2 terminé, fin du jeu
+        else if(niveau == 2 && (int) p.pos.x == 41 && (int) p.pos.y == 1) {
             loop = 0;
             end = 1;
         }
+        
 
         SDL_Event e;
         while(SDL_PollEvent(&e)) 
         {
             /* L'utilisateur ferme la fenetre : */
-           if(e.type == SDL_QUIT||e.key.keysym.sym == SDLK_q) 
+           if(e.type == SDL_QUIT||e.key.keysym.sym == SDLK_e) 
             {
                 loop = 0;
                 break;
@@ -387,35 +326,13 @@ int main(void)
         x=-p.pos.x;
         y=-p.pos.y;
 
-        /*
-        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
-        */
     }
 
     
     /*** FIN DU JEU ***/
 
     if(end==1) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        
-        // Active texturing & attache texture au point de bind
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        // Fond d'écran
-        glBindTexture(GL_TEXTURE_2D, ecran_fin);
-        fixeTexEcran();
-
-        // Detache texture & desactive texturing
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-
-        // Mise a jour fenetre
-        SDL_GL_SwapWindow(window);
+        endScreen(window, textures);
         
         while(end) {
 

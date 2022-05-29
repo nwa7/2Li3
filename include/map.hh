@@ -10,18 +10,19 @@ class Map
     
     int width_;
     int height_;
+    int level;
     std::vector<Bloc> platforms_;
 
     // Methods
-    Map(int width, int height, std::vector<Bloc> data);
-    void displayMap();
-    Bloc operator[](int n);//ca schmoutz
-    //faut faire un arbre pas une liste les bg
+    Map(int width, int height);
+    void clean();
 
-    //fonction collide ou on récupère la liste des blocs avec lesquels le joueur a une collision
+    void loadLvl(int lvl);
+
+    void displayMap();
+    Bloc operator[](int n);
 
     BoundingBox* collide(BoundingBox box);
-
 };
 
 

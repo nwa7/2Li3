@@ -18,8 +18,8 @@ void Quadtree::generate(Map* map){
 
     // Ajout blocs
     for(Bloc bloc : map->platforms_) {
-            this->insertBloc(bloc);
-        }
+        this->insertBloc(bloc);
+    }
 }
 
 /* Recup infos */
