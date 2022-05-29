@@ -116,6 +116,10 @@ int main(void)
 
     // niveau
     int niveau = 1;
+    int bloc1 = 0;
+    int bloc2 = 0;
+    int bloc3 = 0;
+    int bloc4 = 0;
 
     // Fin du jeu
     int end = 0;
@@ -159,7 +163,8 @@ int main(void)
         // Mise a jour fenetre
         SDL_GL_SwapWindow(window);
 
-        /* EVENTS */
+
+          /* EVENTS */
         SDL_Event e;
         while(SDL_PollEvent(&e)) {
             // Racourcis pour fermer fenetre
@@ -272,7 +277,7 @@ int main(void)
 	/*** BOUCLE DE JEU ***/
 
     /* Initialisation du niveau/quadtree */
-    qt.generate(&map);
+    qt.generate(&map1);
 
         
     while(loop) 
@@ -307,6 +312,7 @@ int main(void)
         if (niveau==2){
             map2.displayMap();      
         }
+            drawSquare(p);
             p.drawBloc();
         glPopMatrix();       
         glColor3f(p.color.r, p.color.g, p.color.b); 
@@ -316,11 +322,35 @@ int main(void)
         
         
         /* EVENTS */
-
-        if((int) p.pos.x == 21 && (int) p.pos.y == 1) {
-            loop = 0;
-            end = 1;
+        // NIVEAU 1
+        if (niveau ==1){
+            if((int) p.pos.x == 20 && (int) p.pos.y == 0 && p.name == 'T') {
+                niveau = 2;
+            }
+            
+            if (bloc2 && bloc3 && bloc4){ // Tous les blocs sont bien placés niveau 1
+                loop = 0;
+                niveau = 2;
+                bloc1 = 0;
+                bloc2 = 0;
+                bloc3 = 0;
+                bloc4 = 0;
+            }
         }
+
+        if (niveau == 2){
+            if((int) p.pos.x == 15 && (int) p.pos.y == 0 && p.name == 'T') {
+                end = 1;
+                loop = 0;
+            }
+            
+            if (bloc2 && bloc3 && bloc4){ // Tous les blocs sont bien placés niveau 1
+                end = 1;
+                loop = 0;
+            }
+        }
+
+        // NIVEAU 2
 
         SDL_Event e;
         while(SDL_PollEvent(&e)) 

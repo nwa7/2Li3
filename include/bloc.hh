@@ -10,6 +10,7 @@ class Bloc
 
     Bloc(Vect p, int w, int h, Color c, int animated);
     void drawBloc();
+    void drawSquare();
 
     void setX(float x);
     void setY(float y);

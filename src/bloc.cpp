@@ -1,6 +1,7 @@
 #include <GL/gl.h>
 #include <ctime>
 #include "bloc.hh"
+#include "geometry.hh"
 #include <iostream>
 
 
@@ -39,8 +40,6 @@ void Bloc::drawBloc()
     glEnd();
     ***/
 }
-
-
 
 
 void Bloc::setX(float x){
