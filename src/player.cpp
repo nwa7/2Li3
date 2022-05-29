@@ -1,4 +1,5 @@
 #include <string>
+#include <math.h>
 
 #include "player.hh"
 #include "map.hh"
@@ -31,7 +32,7 @@ void Player::command(int direction){
     }
 }
 
-void Player::move(double dt){
+void Player::move(double dt, Map* map, Player* players){
     //void Player::move(float dt, Map map)
     //Map doit avoir une fonction collide bounding box
 
@@ -52,25 +53,115 @@ void Player::move(double dt){
 
     if (futurSpeed.x<-10){
         futurSpeed.x=-10;
-        this->acceleration.x=0;
+        this->acceleration.x=0.0;
     }
     if (futurSpeed.x>10){
         futurSpeed.x=10;
-        this->acceleration.x=0;
+        this->acceleration.x=0.0;
     }
     //Détermination des collisions
+
     //Définition du bounding box 
     //c'est map.collide
-   
+    Collision collision, current_collision;
+    collision.result = 0;
 
+    BoundingBox mybox = BoundingBox({futurPos.x, futurPos.y + height}, {futurPos.x + width, futurPos.y});
 
-    if (futurPos.y<0){
+    // Collision avec les autres blocs
+    for(auto bloc = std::begin(map->platforms_); bloc != std::end(map->platforms_); ++bloc) {
+        BoundingBox bbox = bloc->getBoundingBox();
+        current_collision = mybox.collision_side(bbox, 0.0, 0.0);
+        if (current_collision.result == NOCOLLISION) continue;
+        collision.result = collision.result | current_collision.result;
+        if (current_collision.result & COLLISIONLEFT){
+            collision.xmin = current_collision.xmin;
+        };
+        if (current_collision.result & COLLISIONRIGHT){
+            collision.xmax = current_collision.xmax;
+        };
+        if (current_collision.result & COLLISIONUP){
+            collision.ymax = current_collision.ymax;
+        };
+        if (current_collision.result & COLLISIONDOWN){
+            collision.ymin = current_collision.ymin;
+        };
+    };
+    //collisions avec les autres players
+    for(int i=0; i<=4; i++){
+        Player *p = &players[i];
+        if (p == this){  // évisons les collisions avec soi-même
+            continue;
+        };
+        BoundingBox bbox = p->getBoundingBox();
+        current_collision = mybox.collision_side(bbox, 0.0, 0.0);
+        if (current_collision.result == NOCOLLISION) continue;
+        collision.result = collision.result | current_collision.result;
+        if (current_collision.result & COLLISIONLEFT){
+            collision.xmin = current_collision.xmin;
+        };
+        if (current_collision.result & COLLISIONRIGHT){
+            collision.xmax = current_collision.xmax;
+        };
+        if (current_collision.result & COLLISIONUP){
+            collision.ymax = current_collision.ymax;
+        };
+        if (current_collision.result & COLLISIONDOWN){
+            collision.ymin = current_collision.ymin;
+        };
+    };
+
+    if (collision.result != NOCOLLISION){
+        
+        futurPos = {this->pos.x,  this->pos.y};
+        futurSpeed = {futurSpeed.x, 0.0};
+
+        if (abs(this->speed.y) < 0.1){
+            this->hasCollision = 0;
+        }
+            else {
+        this->hasCollision = 1;};
+        /*
+        printf("collision %i \n", collision.result);
         this->hasCollision=1;
-        futurSpeed.y=0;
-        futurPos.y=0;
-    }
-    else{
-        this->hasCollision=0;
+        if (collision.result & (COLLISIONLEFT + COLLISIONRIGHT) == (COLLISIONLEFT + COLLISIONRIGHT)){
+            // si on a une double collision droite / gauche, c'est qu'on n'a que le sol ou le plafond
+            collision.result -= (COLLISIONLEFT + COLLISIONRIGHT);
+            printf("double collision droite / gauche supprimée");
+        }
+        if (collision.result & (COLLISIONUP + COLLISIONDOWN)== (COLLISIONUP + COLLISIONDOWN)){
+            // pareil entre haut et bas
+            collision.result -= (COLLISIONUP + COLLISIONDOWN);
+        };
+        if (collision.result & COLLISIONLEFT == COLLISIONLEFT){
+            futurPos.x = collision.xmin;
+            futurSpeed.x = 0;
+            acceleration.x = 0;
+        };
+        if (collision.result & COLLISIONRIGHT == COLLISIONRIGHT){
+            printf("collison à droite %f", collision.xmax);
+            futurPos.x = collision.xmax - this->width;
+            futurSpeed.x = 0;
+            acceleration.x = 0;
+        };
+        if (collision.result & COLLISIONUP == COLLISIONUP){
+            futurPos.y = collision.ymax - this->height;
+            futurSpeed.y = 0;
+            
+        };
+        if (collision.result & COLLISIONDOWN == COLLISIONDOWN){
+            printf("collision en bas %f", collision.ymin);
+            futurPos.y = collision.ymin;
+            futurSpeed.y = 0;
+
+        };
+        */
+
+    } else
+    {
+        this->hasOrder = 0;
+        this->hasCollision = 0;
+        /* code */
     }
 
     this->speed.x=futurSpeed.x;
@@ -80,37 +171,3 @@ void Player::move(double dt){
     this->pos.y=futurPos.y;
 
 }
-
-
-/*
-
-Player newPlayer(float x, float y){
-    Player player;
-    player.acceleration = {0, -9.81};
-    player.speed = {0,0};
-    player.position = {x,y};
-    return player;
-}
-
-void Player::setAccX(float x){
-    this->acceleration.x = x;
-}
-
-void Player::moveAndCollide(){
-
-    float dt = 1/60;
-
-    this->speed += this->acceleration*dt;
-
-    this->position += this->speed*dt;
-
-    // Travail sur les collisions
-    // RECOPIER SANS SCRUPULES MA FOCNTION
-
-}
-
-int Player::collision(Rectangle r){
-    // Remplir
-
-}
-*/

@@ -12,30 +12,22 @@
 #include "graphics.hh"
 #include "quadtree.hh"
 #include "fakesdlimage.hh"
+#include "game.hh"
 
 Display* disp= XOpenDisplay(NULL);
 Screen* screen = DefaultScreenOfDisplay(disp);
 static const unsigned int WINDOW_WIDTH = screen->width;
 static const unsigned int WINDOW_HEIGHT = screen->height;
 
-/* Nombre minimal de millisecondes separant le rendu de deux images */
-static const int FRAMERATE_MILLISECONDS = 1000/20;
 
 // TESTS
 
-Vect posi = {0, 0};
-Color c = colors::blue;
-
-Player p = Player({0,5}, 1, 1, c, 0,'T', posi, posi);
-//position du joueur-largeur-hauteur-couleur-
-float x = 0;
-float y = 0;
 
 /* Déclaration du type tableau Vertex */
-Vect tabvertex[256];
+/*** Vect tabvertex[256];
 int compteur;
 float aspectRatio;
-
+***/
 
 /* Quadtree */
 Quadtree qt(0,0,0,0);
@@ -43,7 +35,8 @@ Quadtree qt(0,0,0,0);
 
 int main(void) 
 {   
-    std::vector<Bloc> level_one;
+
+     std::vector<Bloc> level_one;
     level_one.push_back(Bloc({-30,-15}, 45,15, colors::green,0)); 
     level_one.push_back(Bloc({15,-15}, 5,10, colors::purple,0)); 
     level_one.push_back(Bloc({20,-15}, 5,5, colors::orange,0)); 
@@ -78,7 +71,8 @@ int main(void)
     level_two.push_back(Bloc({90,10}, 10,3, colors::red,0));  
     Map map2(WINDOW_WIDTH, WINDOW_HEIGHT, level_two);
 
-	/*** INITIALISATION SDL ***/
+
+	/*** INITIALISATION SDL ***/ //ON GARDE 
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
 		printf("Error initializing : %s\n", SDL_GetError());
@@ -123,7 +117,7 @@ int main(void)
 
     // Fin du jeu
     int end = 0;
-
+    
     /*** MENU DEBUT JEU ***/
 
     while(begin) {
@@ -274,12 +268,21 @@ int main(void)
         }
     }
 
+if (niveau==1)
+        {
+     gameLoop(window, &map1, niveau) ;     
+        }
+if (niveau==2){
+     gameLoop(window, &map2, niveau) ;     
+        }
+
+#if 0  
 	/*** BOUCLE DE JEU ***/
 
     /* Initialisation du niveau/quadtree */
     qt.generate(&map1);
 
-        
+    
     while(loop) 
     {
        /* Recuperation du temps au debut de la boucle */
@@ -338,6 +341,7 @@ int main(void)
             }
         }
 
+        // NIVEAU 2
         if (niveau == 2){
             if((int) p.pos.x == 15 && (int) p.pos.y == 0 && p.name == 'T') {
                 end = 1;
@@ -349,8 +353,6 @@ int main(void)
                 loop = 0;
             }
         }
-
-        // NIVEAU 2
 
         SDL_Event e;
         while(SDL_PollEvent(&e)) 
@@ -422,6 +424,7 @@ int main(void)
         printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
         */
     }
+    #endif
 
     
     /*** FIN DU JEU ***/

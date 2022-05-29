@@ -17,15 +17,9 @@ class Player : public Bloc
         : Bloc::Bloc(pos, width, height, color, an), name(c), acceleration(a), speed(s)
     {}
 
-    /*** Methods 
     
-    void setAccX(float x);
-    void moveAndCollide();
-    int collision(Rectangle);
-***/
     void command(int direction);
-    void move(double dt);
-    //void move(float dt, Map map);
+    void move(double dt, Map* map, Player* players);
 
     int hasOrder=0;
     int hasCollision;
