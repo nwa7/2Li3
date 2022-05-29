@@ -7,7 +7,7 @@
 #include <GL/glu.h>
 
 
-SDL_GLContext initGraphics(int width, int height, SDL_Window* window);
+SDL_GLContext initGraphics(SDL_Window* window);
 
 void onWindowResized(unsigned int width, unsigned int height);
 

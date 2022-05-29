@@ -2,6 +2,6 @@
 #define GEOMETRY_H
 #include "player.hh"
 
-void drawOrigin(Player p);
+void drawOrigin();
 void drawSquare(int filled);
 #endif
