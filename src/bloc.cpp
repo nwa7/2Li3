@@ -31,23 +31,7 @@ void Bloc::drawBloc(int time)
     glVertex2f( this->pos.x, this->height+ this->pos.y);
 
     glEnd();
-    
-    /*** centré sur le centre du bloc perso
-
-    glBegin(GL_TRIANGLE_FAN);
-q
-
-    glVertex2f( this->width/2 + this->pos.x, this->height/2 + this->pos.y);
-    glVertex2f( this->width/2 + this->pos.x, -this->height/2+ this->pos.y);
-    glVertex2f( -this->width/2 + this->pos.x, -this->height/2+ this->pos.y);
-    glVertex2f( -this->width/2 + this->pos.x, this->height/2+ this->pos.y);
-
-    glEnd();
-    ***/
 }
-
-
-
 
 void Bloc::setX(float x){
     this->pos.x = x;

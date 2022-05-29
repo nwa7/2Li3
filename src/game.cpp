@@ -5,15 +5,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <X11/Xlib.h>
+
 #include "player.hh"
 #include "geometry.hh"
+#include "quadtree.hh"
+
+Display* d = XOpenDisplay(NULL);
+Screen* s = XDefaultScreenOfDisplay(d);
+static const unsigned int WINDOW_WIDTH = s->width;
+static const unsigned int WINDOW_HEIGHT = s->height;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
 static const int FRAMERATE_MILLISECONDS = 1000/20;
 
-
 // Boucle de jeu
-int gameLoop(SDL_Window* window, Map* map){
+int gameLoop(SDL_Window* window, Map* map1, Map* map2, Quadtree* qt1, Quadtree* qt2){
     // Boucle de jeu
     Color c = colors::blue;
     Vect posi = {0, 0};
@@ -27,59 +34,61 @@ int gameLoop(SDL_Window* window, Map* map){
 
     Player *current_player = &players[0];
     int current_player_index = 0;  // index du player courant
-    //position du joueur-largeur-hauteur-couleur-
     float x = 0;
     float y = 0;
+
+    // Entree boucle
     int loop = 1;
+
+    // Niveau
+    int niveau = 1;
 
     // Fin du jeu
     int end = 0;
 
-    /*** MENU DEBUT JEU ***/
-
     Uint32 startTime = SDL_GetTicks();
     int h_player_order = 0;
     int player_jump_order = 0;
-	/*** BOUCLE DE JEU ***/
-    glMatrixMode(GL_MODELVIEW);
+
+    /*** BOUCLE DE JEU ***/
 
     while(loop) 
     {
-       glClear(GL_COLOR_BUFFER_BIT);
-        glLoadIdentity();
-		// Dessins
-
-		// Toute cette structure serait remplacable par un systeme plus vaste qui gererait l affichage des menus
-		// SDL_GL_SwapWindow(window);
-        /*** SDL ***/
-
-        /* Recuperation du temps au debut de la boucle */
         
-        /* Placer ici le code de dessin */
+        /*** SDL ***/
+        glClear(GL_COLOR_BUFFER_BIT);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
         glPushMatrix();
-
-        glTranslatef(x, y, 0.);
-        //glScalef(q.width, q.height, 1.);
-        drawOrigin();
-        map->displayMap(startTime);
-               
-        Player * p;
-        for (int i = 0; i < 4; i++){
-            p = players + i;
-            drawSquare(*p);
-            p->drawBloc(startTime);
-        };
+            glTranslatef(x, y, 0.);
+            // Affiche le bon niveau
+            if(niveau == 1) {
+                map1->displayMap(startTime);
+            }
+            else if(niveau == 2) {
+                map2->displayMap(startTime);
+            }
+            
+            // Affiche les joueurs
+            Player * p;
+            for (int i = 0; i < 4; i++){
+                p = players + i;
+                drawSquare(*p);
+                p->drawBloc(startTime);
+            };
         glPopMatrix();
+
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
         
         
         /* EVENTS */
-          /* EVENTS */        // NIVEAU 1
-        if (map->level_ == 1){
+
+        // NIVEAU 1
+        if (niveau == 1){
             if((int) current_player->pos.x == 15 && (int) current_player->pos.y == 0 && current_player->name == 'T') {
-                map->level_ = 2;
+                niveau = 2;
             }
            /* 
             if (bloc2 && bloc3 && bloc4){ // Tous les blocs sont bien placés niveau 1
@@ -93,7 +102,7 @@ int gameLoop(SDL_Window* window, Map* map){
             */
         }
 
-        if (map->level_ == 2){
+        if (niveau == 2){
             if((int) current_player->pos.x == 15 && (int) current_player->pos.y == 0 && current_player->name == 'T') {
                 end = 1;
                 loop = 0;
@@ -128,27 +137,19 @@ int gameLoop(SDL_Window* window, Map* map){
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
                     
                     if(e.key.keysym.sym == SDLK_LEFT) {
-                        //p.pos.x-=0.5;
                         h_player_order = LEFT;
-                        
-                        //x+=0.5;
                         printf("position joueur : x:%f y:%f\n", current_player->pos.x, current_player->pos.y);
                         printf("Speed joueur : x:%f y:%f\n", current_player->speed.x, current_player->speed.y);
                     }
 
                     else if(e.key.keysym.sym == SDLK_RIGHT) {
-                        //p.pos.x+=0.5;
                         h_player_order = RIGHT;
-                        
-                        //x+=0.5;
                         printf("position joueur : x:%f y:%f\n", current_player->pos.x, current_player->pos.y);
                         printf("Speed joueur : x:%f y:%f\n", current_player->speed.x, current_player->speed.y);
                     }
 
                     else if(e.key.keysym.sym == SDLK_UP) {
                         player_jump_order = UP;
-                        
-                        //x+=0.5;
                         printf("position joueur : x:%f y:%f\n", current_player->pos.x, current_player->pos.y);
                         printf("Speed joueur : x:%f y:%f\n", current_player->speed.x, current_player->speed.y);
                     }
@@ -156,9 +157,8 @@ int gameLoop(SDL_Window* window, Map* map){
                         current_player_index = (current_player_index +1) % 4;
                         current_player = &players[current_player_index];
                     }
+                break;
 
-
-                    break;
                 case SDL_KEYUP:
                     switch(e.key.keysym.sym){
                         case SDLK_LEFT:
@@ -176,10 +176,7 @@ int gameLoop(SDL_Window* window, Map* map){
                             break;
                     }   
 
-
                 default:
-                    
-                     
                     break;
             }
         }
@@ -189,18 +186,24 @@ int gameLoop(SDL_Window* window, Map* map){
         if (player_jump_order != 0){
             current_player->command(UP);
         }
-
         
         /* Calcul du temps ecoule */
         Uint32 endLoopTime = SDL_GetTicks();
 
         if(endLoopTime - startTime < FRAMERATE_MILLISECONDS) 
-            {
-                SDL_Delay(FRAMERATE_MILLISECONDS - endLoopTime + startTime);
-            }
+        {
+            SDL_Delay(FRAMERATE_MILLISECONDS - endLoopTime + startTime);
+        }
+
     for (int i=0; i<=4; i++){
         p = &players[i];
-        p->move((endLoopTime - startTime)/1000., map, players);
+        if(niveau==1) {
+            p->move((endLoopTime - startTime)/1000., map1, players);
+        }
+        else if(niveau==2) {
+            p->move((endLoopTime - startTime)/1000., map2, players);
+        }
+        
     }
     
     startTime=endLoopTime;

@@ -33,8 +33,6 @@ void Player::command(int direction){
 }
 
 void Player::move(double dt, Map* map, Player* players){
-    //void Player::move(float dt, Map map)
-    //Map doit avoir une fonction collide bounding box
 
     //Définition du mouvement 
     if(this->hasOrder==0){
@@ -61,8 +59,7 @@ void Player::move(double dt, Map* map, Player* players){
     }
     //Détermination des collisions
 
-    //Définition du bounding box 
-    //c'est map.collide
+    //Définition du bounding box
     Collision collision, current_collision;
     collision.result = 0;
 
@@ -87,6 +84,7 @@ void Player::move(double dt, Map* map, Player* players){
             collision.ymin = current_collision.ymin;
         };
     };
+
     //collisions avec les autres players
     for(int i=0; i<=4; i++){
         Player *p = &players[i];
@@ -151,7 +149,6 @@ void Player::move(double dt, Map* map, Player* players){
     {
         this->hasOrder = 0;
         this->hasCollision = 0;
-        /* code */
     }
 
     this->speed.x=futurSpeed.x;

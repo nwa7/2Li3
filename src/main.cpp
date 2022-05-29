@@ -21,70 +21,17 @@ Screen* screen = XDefaultScreenOfDisplay(disp);
 static const unsigned int WINDOW_WIDTH = screen->width;
 static const unsigned int WINDOW_HEIGHT = screen->height;
 
-// TESTS
-
-Vect posi = {0, 0};
-
-Color c = colors::blue;
-
-//position du joueur-largeur-hauteur-couleur-
-float x = 0;
-float y = 0;
-
 /* Déclaration du type tableau Vertex */
 Vect tabvertex[256];
 int compteur;
 float aspectRatio;
 
-/*
-Bloc* maap(posi, 10, 10, {0.1, 0.1, 0.5}, 0);
-Quadtree quad;
-quad.generate(maap);
-
-Bloc* test({-2,-2}, 1, 1, {0.8, 0.7, 0.5}, 0);
-quad.insertBloc(test);
-*/
-
+/* Quadtree */
+Quadtree qt1(0,0,0,0);
+Quadtree qt2(0,0,0,0);
 
 int main(void) 
-{   
-
-    std::vector<Bloc> level_one;
-    level_one.push_back(Bloc({-30,-15}, 45,15, colors::green,0)); 
-    level_one.push_back(Bloc({15,-15}, 5,10, colors::purple,0)); 
-    level_one.push_back(Bloc({20,-15}, 5,5, colors::orange,0)); 
-    level_one.push_back(Bloc({25,-15}, 10,1, colors::yellow,0)); 
-    level_one.push_back(Bloc({35,-15}, 50,10, colors::blue,0)); 
-    level_one.push_back(Bloc({75,-2}, 10,3, colors::purple,1));
-    level_one.push_back(Bloc({53,-5}, 20,5, colors::orange,0));  
-    level_one.push_back(Bloc({85,-15}, 5,5, colors::yellow,0));
-    level_one.push_back(Bloc({90,-15}, 60,1, colors::green,0));  
-    level_one.push_back(Bloc({90,10}, 10,3, colors::red,0));  
-    level_one.push_back(Bloc({105,14}, 10,3, colors::green,0));  
-    level_one.push_back(Bloc({115,-12}, 15,20, colors::orange,0));  
-    level_one.push_back(Bloc({130,-12}, 18,2, colors::orange,0));
-    level_one.push_back(Bloc({148,-14}, 2,4, colors::orange,0));
-    level_one.push_back(Bloc({150,-15}, 7,17, colors::blue,0));
-    level_one.push_back(Bloc({152,2}, 5,22, colors::green,0));
-    level_one.push_back(Bloc({157,-15}, 7,20, colors::red,0));
-    level_one.push_back(Bloc({164,-15}, 7,23, colors::blue,0));
-    level_one.push_back(Bloc({171,-15}, 4,26, colors::purple,0));
-
-    Map map1(WINDOW_WIDTH, WINDOW_HEIGHT, 1, level_one);
-
-    std::vector<Bloc> level_two;
-    level_two.push_back(Bloc({-30,-15}, 45,15, colors::blue,0)); 
-    level_two.push_back(Bloc({15,-15}, 5,10, colors::orange,0)); 
-    level_two.push_back(Bloc({20,-15}, 5,5, colors::purple,0)); 
-    level_two.push_back(Bloc({25,-15}, 10,1, colors::yellow,0)); 
-    level_two.push_back(Bloc({35,-15}, 50,10, colors::blue,0)); 
-    level_two.push_back(Bloc({53,-5}, 20,5, colors::orange,0));  
-    level_two.push_back(Bloc({85,-15}, 5,5, colors::yellow,0));
-    level_two.push_back(Bloc({90,-15}, 60,1, colors::green,0));  
-    level_two.push_back(Bloc({90,10}, 10,3, colors::red,0));  
-    Map map2(WINDOW_WIDTH, WINDOW_HEIGHT, 2, level_two);
-
-
+{  
 	/*** INITIALISATION SDL ***/
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -94,17 +41,20 @@ int main(void)
 	SDL_Window* window = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH , WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
     SDL_GLContext glcontext = initGraphics(window);
 
-	/* TEXTURES */
-	GLuint ecran_debut = initTex("images/Ecran_jeu.png");
-    GLuint start_c = initTex("images/start_col.png");
-    GLuint start = initTex("images/start.png");
-    GLuint rules_c = initTex("images/rules_col.png");
-    GLuint rules = initTex("images/rules.png");
-    GLuint credits_c = initTex("images/credits_col.png");
-    GLuint credits = initTex("images/credits.png");
-    GLuint exit_c = initTex("images/exit_col.png");
-    GLuint exit = initTex("images/exit.png");
-    GLuint ecran_fin = initTex("images/Ecran_fin.png");
+	/* IMAGES */
+    GLuint textures[12];
+    textures[0] = initTex("images/Ecran_jeu.png");
+    textures[1] = initTex("images/Ecran_rules.png");
+    textures[2] = initTex("images/Ecran_credits.png");
+    textures[3] = initTex("images/start_col.png");
+    textures[4] = initTex("images/start.png");
+    textures[5] = initTex("images/rules_col.png");
+    textures[6] = initTex("images/rules.png");
+    textures[7] = initTex("images/credits_col.png");
+    textures[8] = initTex("images/credits.png");
+    textures[9] = initTex("images/exit_col.png");
+    textures[10] = initTex("images/exit.png");
+    textures[11] = initTex("images/Ecran_fin.png");
 
     /* FENETRE */
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -115,63 +65,29 @@ int main(void)
 
     // Menu du début
     int begin = 1;
+    int menu = 0;
     unsigned int compt=0;
 
     // Boucle de jeu
     int loop = 0;
 
     // niveau
-    int niveau = 1;
     int bloc1 = 0;
     int bloc2 = 0;
     int bloc3 = 0;
     int bloc4 = 0;
 
     // Fin du jeu
-    int end = 0;
-
+    int end = 1;
 
 
     /*** MENU DEBUT JEU ***/
 
     while(begin) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        // Affichage menu
+        chooseMenu(window,textures,menu, compt);
 
-        // Active texturing & attache texture au point de bind
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        // Fond d'écran
-        glBindTexture(GL_TEXTURE_2D, ecran_debut);
-        fixeTexEcran();
-
-        // Start
-        glTranslatef(0,3,0);
-        affichageMenu(compt, 1, start, start_c);
-
-        // Rules
-        glTranslatef(0,-4,0);
-        affichageMenu(compt, 2, rules, rules_c);
-
-        // Credits
-        glTranslatef(0,-4,0);
-        affichageMenu(compt, 3, credits, credits_c);
-
-        // Exit
-        glTranslatef(0,-4,0);
-        affichageMenu(compt, 4, exit, exit_c);
-
-        // Detache texture & desactive texturing
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-
-        // Mise a jour fenetre
-        SDL_GL_SwapWindow(window);
-
-        /* EVENTS */
+        // Choix menu
         SDL_Event e;
         while(SDL_PollEvent(&e)) {
             // Racourcis pour fermer fenetre
@@ -215,16 +131,13 @@ int main(void)
                         loop = 1;
                     }
 
-                    /*// Clic sur rules
+                    // Clic sur rules
                     else if(e.button.x < 584 && e.button.x > 497 && e.button.y < 391 && e.button.y > 356) {
-                        ...;
-                    }*/
-
+                        menu = 2;
+                    }
                     // Clic sur credits
                     else if(e.button.x < 601 && e.button.x > 482 && e.button.y < 463 && e.button.y > 426) {
-                        begin = 0;
-                        loop = 0;
-                        end = 1;
+                        menu = 3;
                     }
                     break;
                 
@@ -233,13 +146,17 @@ int main(void)
                 case SDL_KEYDOWN:
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
 
+                    // m pour retourner au menu principal
+                    if(e.key.keysym.sym==SDLK_m) {
+                        menu = 0;
+                    }
+
                     // Flèche du haut
                     if(e.key.keysym.sym==SDLK_UP) {
                         if(compt > 1) {
                             compt--;
                         }
                     }
-
                     // Flèche du bas
                     else if(e.key.keysym.sym==SDLK_DOWN) {
                         if(compt < 4) {
@@ -261,17 +178,14 @@ int main(void)
                             loop = 1;
                         }
 
-                        /*//Entrer sur rules
-                        else if(compteur == 2) {
-                            ...;
-                        }*/
-
+                        //Entrer sur rules
+                        else if(compt == 2) {
+                            menu = 2;
+                        }
                         //Entrer sur credits
                         else if(compt == 3) {
-                            begin = 0;
-                            loop = 0;
-                            end = 1;
-                        }
+                            menu = 3;
+                        } 
                     }
                     break;
                     
@@ -282,33 +196,22 @@ int main(void)
         }
     }
 
-	/*** BOUCLE DE JEU ***/
-    int response_game = gameLoop(window, &map1);
-    
+    /* Initialisation du quadtree et de la map */
+    Map map1(WINDOW_WIDTH,WINDOW_HEIGHT);
+    map1.loadLvl(1);
+    qt1.generate(&map1);
 
+    Map map2(WINDOW_WIDTH,WINDOW_HEIGHT);
+    map2.loadLvl(2);
+    qt2.generate(&map2);
+
+	/*** BOUCLE DE JEU ***/
+    int response_game = gameLoop(window, &map1, &map2, &qt1, &qt2);
     
     /*** FIN DU JEU ***/
 
     if(end==1) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        
-        // Active texturing & attache texture au point de bind
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        // Fond d'écran
-        glBindTexture(GL_TEXTURE_2D, ecran_fin);
-        fixeTexEcran();
-
-        // Detache texture & desactive texturing
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-
-        // Mise a jour fenetre
-        SDL_GL_SwapWindow(window);
+        endScreen(window, textures);
         
         while(end) {
 

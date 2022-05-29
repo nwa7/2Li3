@@ -12,7 +12,6 @@ struct Collision{
     float xmin, xmax, ymin, ymax;
 };
 
-
 class BoundingBox
 {
     public:
@@ -62,13 +61,5 @@ int const COLLISIONLEFT = 1;
 int const COLLISIONRIGHT = 2;
 int const COLLISIONUP = 4;
 int const COLLISIONDOWN = 8;
-
-
-
-
-
-
-
-//dans la map il faut aussi une fonction collide pour pouvoir verifier que y a bien collision
 
 #endif

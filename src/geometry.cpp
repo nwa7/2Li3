@@ -40,31 +40,3 @@ void drawSquare(Player& p)
 
     glEnd();
 }
-
-
-// Old Bloc.h
-// Utilisable pour afficher des textures par exemple
-// Utilisable comme plateformes
-
-/**
-    float x;
-    float y;
-    float sizeX;
-    float sizeY;
-
-    // Methods
-
-    //lit les donnees
-    float getPosX();
-    float getPosY();
-    float getSizeX();
-    float getSizeY();
-
-    //definir les donnees
-    void setX(float x);
-    void setY(float y);
-
-} Vect;
-**/
-
-// Classes
