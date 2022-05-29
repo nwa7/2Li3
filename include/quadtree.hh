@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "bloc.hh"
+#include "map.hh"
 
 class Quadtree {
     
@@ -21,7 +22,7 @@ class Quadtree {
     // Methodes
 
     Quadtree(int xmin, int xmax, int ymin, int ymax);
-    void generate(Bloc* map);
+    void generate(Map* map);
 
     int getX();
     int getY();

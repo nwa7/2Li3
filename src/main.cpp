@@ -24,7 +24,6 @@ static const int FRAMERATE_MILLISECONDS = 1000/20;
 // TESTS
 
 Vect posi = {0, 0};
-
 Color c = colors::blue;
 
 Player p = Player({0,5}, 1, 1, c, 0,'T', posi, posi);
@@ -39,6 +38,7 @@ float aspectRatio;
 
 
 /* Quadtree */
+Quadtree qt(0,0,0,0);
 
 
 int main(void) 
@@ -271,6 +271,10 @@ int main(void)
 
 	/*** BOUCLE DE JEU ***/
 
+    /* Initialisation du niveau/quadtree */
+    qt.generate(&map);
+
+        
     while(loop) 
     {
        /* Recuperation du temps au debut de la boucle */
@@ -278,17 +282,18 @@ int main(void)
         
         /* Calcul du temps ecoule */
         int elapsedTime = SDL_GetTicks() - startTime;
+
+        /* // Test quadtree searchBloc
+        std::vector<Bloc> coll = qt.searchBloc(&p);
+        for(Bloc bloc : coll) {
+            printf("Peut entrer en collision avec : %d", bloc.width);
+        }*/
         
         /*** SDL ***/
 
         glClear(GL_COLOR_BUFFER_BIT);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-
-        // Active texturing & attache texture au point de bind
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Code de dessin 
 
@@ -305,10 +310,6 @@ int main(void)
             p.drawBloc();
         glPopMatrix();       
         glColor3f(p.color.r, p.color.g, p.color.b); 
-
-        // Detache texture & desactive texturing
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
 
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
