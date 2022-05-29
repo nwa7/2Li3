@@ -2,6 +2,7 @@
 #define QUADTREE_H
 
 #include "bloc.hh"
+#include "player.hh"
 
 class Quadtree {
     

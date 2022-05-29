@@ -11,12 +11,12 @@ void drawOrigin(Player p)
     glBegin(GL_LINES);
 
     glColor3f(1., 0., 0.);
-    glVertex2f( p.pos.x , p.pos.y);
-    glVertex2f( p.pos.x+1.0 , p.pos.y);
+    glVertex2f( 0 , 0);
+    glVertex2f( 0 , 1);
 
     glColor3f(0., 1., 0.);
-    glVertex2f( p.pos.x , p.pos.y);
-    glVertex2f( p.pos.x , p.pos.y+1.0);
+    glVertex2f( 0, 0);
+    glVertex2f( 1 , 0);
 
     glEnd();
 
