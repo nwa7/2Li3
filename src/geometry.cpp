@@ -30,7 +30,7 @@ void drawSquare(Player& p)
     glColor3f(p.color.r, p.color.g, p.color.b);
     Vect posi;
     if (p.name == 'T'){
-        Vect posi = {20,0};
+        Vect posi = {15,0};
     }
     glVertex2f( posi.x, posi.y);
     glVertex2f( posi.x+ p.width, posi.y);

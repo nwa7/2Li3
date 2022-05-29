@@ -65,7 +65,7 @@ int gameLoop(SDL_Window* window, Map* map){
         map->displayMap(startTime);
                
         Player * p;
-        for (int i=0; i<=4; i++){
+        for (int i = 0; i < 4; i++){
             p = players + i;
             drawSquare(*p);
             p->drawBloc(startTime);
@@ -78,7 +78,7 @@ int gameLoop(SDL_Window* window, Map* map){
         /* EVENTS */
           /* EVENTS */        // NIVEAU 1
         if (map->level_ == 1){
-            if((int) current_player->pos.x == 20 && (int) current_player->pos.y == 0 && current_player->name == 'T') {
+            if((int) current_player->pos.x == 15 && (int) current_player->pos.y == 0 && current_player->name == 'T') {
                 map->level_ = 2;
             }
            /* 
