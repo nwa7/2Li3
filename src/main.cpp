@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
+#include <X11/Xlib.h>
 #include "map.hh"
 #include "geometry.hh"
 #include "player.hh"
@@ -78,6 +78,12 @@ int main(int argc, char** argv)
 	gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
     onWindowResized(WINDOW_WIDTH, WINDOW_HEIGHT);
 
+
+    Display* disp= XOpenDisplay(NULL);
+    Screen* screen = DefaultScreenOfDisplay(disp);
+    int height= screen->height;
+    int width=screen->width;
+    
     /*** INITIALISATION BOUCLES ***/
 
     // Menu du début
@@ -160,12 +166,8 @@ int main(int argc, char** argv)
 
                 /* SAISIE SOURIS */
                 case SDL_MOUSEBUTTONUP:
-                    GLFWvidmode return_struct;
-                    glfwGetDesktopMode( &return_struct);
-                    int heigh=return_struct.Height
-                    int width=return_struct.Width
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-                    printf("longueur (%d) hauteur(%d)", width , height)
+                    printf("longueur (%d) hauteur(%d)", width , height);
 
                     // Clic sur exit
                     if(e.button.x < 571 && e.button.x > 508 && e.button.y < 535 && e.button.y > 498) {
