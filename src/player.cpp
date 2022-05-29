@@ -112,50 +112,40 @@ void Player::move(double dt, Map* map, Player* players){
     };
 
     if (collision.result != NOCOLLISION){
-        
-        futurPos = {this->pos.x,  this->pos.y};
-        futurSpeed = {futurSpeed.x, 0.0};
 
-        if (abs(this->speed.y) < 0.1){
-            this->hasCollision = 0;
-        }
-            else {
-        this->hasCollision = 1;};
-        /*
         printf("collision %i \n", collision.result);
         this->hasCollision=1;
-        if (collision.result & (COLLISIONLEFT + COLLISIONRIGHT) == (COLLISIONLEFT + COLLISIONRIGHT)){
+        if ((collision.result & (COLLISIONLEFT + COLLISIONRIGHT)) == (COLLISIONLEFT + COLLISIONRIGHT)){
             // si on a une double collision droite / gauche, c'est qu'on n'a que le sol ou le plafond
             collision.result -= (COLLISIONLEFT + COLLISIONRIGHT);
             printf("double collision droite / gauche supprimée");
         }
-        if (collision.result & (COLLISIONUP + COLLISIONDOWN)== (COLLISIONUP + COLLISIONDOWN)){
+        if ((collision.result & (COLLISIONUP + COLLISIONDOWN))== (COLLISIONUP + COLLISIONDOWN)){
             // pareil entre haut et bas
             collision.result -= (COLLISIONUP + COLLISIONDOWN);
         };
-        if (collision.result & COLLISIONLEFT == COLLISIONLEFT){
+        if ((collision.result & COLLISIONLEFT) == COLLISIONLEFT){
             futurPos.x = collision.xmin;
             futurSpeed.x = 0;
             acceleration.x = 0;
         };
-        if (collision.result & COLLISIONRIGHT == COLLISIONRIGHT){
+        if ((collision.result & COLLISIONRIGHT) == COLLISIONRIGHT){
             printf("collison à droite %f", collision.xmax);
             futurPos.x = collision.xmax - this->width;
             futurSpeed.x = 0;
             acceleration.x = 0;
         };
-        if (collision.result & COLLISIONUP == COLLISIONUP){
+        if ((collision.result & COLLISIONUP) == COLLISIONUP){
             futurPos.y = collision.ymax - this->height;
             futurSpeed.y = 0;
             
         };
-        if (collision.result & COLLISIONDOWN == COLLISIONDOWN){
+        if ((collision.result & COLLISIONDOWN) == COLLISIONDOWN){
             printf("collision en bas %f", collision.ymin);
             futurPos.y = collision.ymin;
             futurSpeed.y = 0;
 
         };
-        */
 
     } else
     {

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <X11/Xlib.h>
+
 #include "map.hh"
 #include "geometry.hh"
 #include "player.hh"
@@ -14,72 +14,48 @@
 #include "fakesdlimage.hh"
 #include "game.hh"
 
-Display* disp= XOpenDisplay(NULL);
-Screen* screen = DefaultScreenOfDisplay(disp);
-static const unsigned int WINDOW_WIDTH = screen->width;
-static const unsigned int WINDOW_HEIGHT = screen->height;
+
+static const unsigned int WINDOW_WIDTH = 1080;
+static const unsigned int WINDOW_HEIGHT = 720;
+
 
 
 // TESTS
 
+Vect posi = {0, 0};
+
+Color c = colors::blue;
+
+//position du joueur-largeur-hauteur-couleur-
+float x = 0;
+float y = 0;
 
 /* Déclaration du type tableau Vertex */
-/*** Vect tabvertex[256];
+Vect tabvertex[256];
 int compteur;
 float aspectRatio;
-***/
+Map map(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-/* Quadtree */
-Quadtree qt(0,0,0,0);
+/*
+Bloc* maap(posi, 10, 10, {0.1, 0.1, 0.5}, 0);
+Quadtree quad;
+quad.generate(maap);
+
+Bloc* test({-2,-2}, 1, 1, {0.8, 0.7, 0.5}, 0);
+quad.insertBloc(test);
+*/
 
 
-int main(void) 
+int main(int argc, char** argv) 
 {   
-
-     std::vector<Bloc> level_one;
-    level_one.push_back(Bloc({-30,-15}, 45,15, colors::green,0)); 
-    level_one.push_back(Bloc({15,-15}, 5,10, colors::purple,0)); 
-    level_one.push_back(Bloc({20,-15}, 5,5, colors::orange,0)); 
-    level_one.push_back(Bloc({25,-15}, 10,1, colors::yellow,0)); 
-    level_one.push_back(Bloc({35,-15}, 50,10, colors::blue,0)); 
-    level_one.push_back(Bloc({75,-2}, 10,3, colors::purple,1));
-    level_one.push_back(Bloc({53,-5}, 20,5, colors::orange,0));  
-    level_one.push_back(Bloc({85,-15}, 5,5, colors::yellow,0));
-    level_one.push_back(Bloc({90,-15}, 60,1, colors::green,0));  
-    level_one.push_back(Bloc({90,10}, 10,3, colors::red,0));  
-    level_one.push_back(Bloc({105,14}, 10,3, colors::green,0));  
-    level_one.push_back(Bloc({115,-12}, 15,20, colors::orange,0));  
-    level_one.push_back(Bloc({130,-12}, 18,2, colors::orange,0));
-    level_one.push_back(Bloc({148,-14}, 2,4, colors::orange,0));
-    level_one.push_back(Bloc({150,-15}, 7,17, colors::blue,0));
-    level_one.push_back(Bloc({152,2}, 5,22, colors::green,0));
-    level_one.push_back(Bloc({157,-15}, 7,20, colors::red,0));
-    level_one.push_back(Bloc({164,-15}, 7,23, colors::blue,0));
-    level_one.push_back(Bloc({171,-15}, 4,26, colors::purple,0));
-
-    Map map1(WINDOW_WIDTH, WINDOW_HEIGHT, level_one);
-
-    std::vector<Bloc> level_two;
-    level_two.push_back(Bloc({-30,-15}, 45,15, colors::blue,0)); 
-    level_two.push_back(Bloc({15,-15}, 5,10, colors::orange,0)); 
-    level_two.push_back(Bloc({20,-15}, 5,5, colors::purple,0)); 
-    level_two.push_back(Bloc({25,-15}, 10,1, colors::yellow,0)); 
-    level_two.push_back(Bloc({35,-15}, 50,10, colors::blue,0)); 
-    level_two.push_back(Bloc({53,-5}, 20,5, colors::orange,0));  
-    level_two.push_back(Bloc({85,-15}, 5,5, colors::yellow,0));
-    level_two.push_back(Bloc({90,-15}, 60,1, colors::green,0));  
-    level_two.push_back(Bloc({90,10}, 10,3, colors::red,0));  
-    Map map2(WINDOW_WIDTH, WINDOW_HEIGHT, level_two);
-
-
-	/*** INITIALISATION SDL ***/ //ON GARDE 
+	/*** INITIALISATION SDL ***/
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
 		printf("Error initializing : %s\n", SDL_GetError());
 		exit(11);
 	}
 	SDL_Window* window = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH , WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-    SDL_GLContext glcontext = initGraphics(window);
+    SDL_GLContext glcontext = initGraphics(WINDOW_WIDTH , WINDOW_HEIGHT, window);
 
 	/* TEXTURES */
 	GLuint ecran_debut = initTex("images/Ecran_jeu.png");
@@ -98,7 +74,6 @@ int main(void)
 	gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
     onWindowResized(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-
     /*** INITIALISATION BOUCLES ***/
 
     // Menu du début
@@ -108,16 +83,9 @@ int main(void)
     // Boucle de jeu
     int loop = 0;
 
-    // niveau
-    int niveau = 1;
-    int bloc1 = 0;
-    int bloc2 = 0;
-    int bloc3 = 0;
-    int bloc4 = 0;
-
     // Fin du jeu
     int end = 0;
-    
+
     /*** MENU DEBUT JEU ***/
 
     while(begin) {
@@ -157,8 +125,7 @@ int main(void)
         // Mise a jour fenetre
         SDL_GL_SwapWindow(window);
 
-
-          /* EVENTS */
+        /* EVENTS */
         SDL_Event e;
         while(SDL_PollEvent(&e)) {
             // Racourcis pour fermer fenetre
@@ -190,6 +157,7 @@ int main(void)
                 /* SAISIE SOURIS */
                 case SDL_MOUSEBUTTONUP:
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
+
                     // Clic sur exit
                     if(e.button.x < 571 && e.button.x > 508 && e.button.y < 535 && e.button.y > 498) {
                         begin = 0;
@@ -268,163 +236,9 @@ int main(void)
         }
     }
 
-if (niveau==1)
-        {
-     gameLoop(window, &map1, niveau) ;     
-        }
-if (niveau==2){
-     gameLoop(window, &map2, niveau) ;     
-        }
-
-#if 0  
 	/*** BOUCLE DE JEU ***/
-
-    /* Initialisation du niveau/quadtree */
-    qt.generate(&map1);
-
+    int response_game = gameLoop(window, &map);
     
-    while(loop) 
-    {
-       /* Recuperation du temps au debut de la boucle */
-        int startTime = SDL_GetTicks();
-        
-        /* Calcul du temps ecoule */
-        int elapsedTime = SDL_GetTicks() - startTime;
-
-        /* // Test quadtree searchBloc
-        std::vector<Bloc> coll = qt.searchBloc(&p);
-        for(Bloc bloc : coll) {
-            printf("Peut entrer en collision avec : %d", bloc.width);
-        }*/
-        
-        /*** SDL ***/
-
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
-        // Code de dessin 
-
-        glPushMatrix();
-            glTranslatef(x, y, 0.);
-            drawOrigin();
-        if (niveau==1)
-        {
-            map1.displayMap();       
-        }
-        if (niveau==2){
-            map2.displayMap();      
-        }
-            drawSquare(p);
-            p.drawBloc();
-        glPopMatrix();       
-        glColor3f(p.color.r, p.color.g, p.color.b); 
-
-        /* Echange du front et du back buffer : mise a jour de la fenetre */
-        SDL_GL_SwapWindow(window);
-        
-        
-        /* EVENTS */
-        // NIVEAU 1
-        if (niveau ==1){
-            if((int) p.pos.x == 20 && (int) p.pos.y == 0 && p.name == 'T') {
-                niveau = 2;
-            }
-            
-            if (bloc2 && bloc3 && bloc4){ // Tous les blocs sont bien placés niveau 1
-                loop = 0;
-                niveau = 2;
-                bloc1 = 0;
-                bloc2 = 0;
-                bloc3 = 0;
-                bloc4 = 0;
-            }
-        }
-
-        // NIVEAU 2
-        if (niveau == 2){
-            if((int) p.pos.x == 15 && (int) p.pos.y == 0 && p.name == 'T') {
-                end = 1;
-                loop = 0;
-            }
-            
-            if (bloc2 && bloc3 && bloc4){ // Tous les blocs sont bien placés niveau 1
-                end = 1;
-                loop = 0;
-            }
-        }
-
-        SDL_Event e;
-        while(SDL_PollEvent(&e)) 
-        {
-            /* L'utilisateur ferme la fenetre : */
-           if(e.type == SDL_QUIT||e.key.keysym.sym == SDLK_q) 
-            {
-                loop = 0;
-                break;
-            }
-
-            /* Quelques exemples de traitement d'evenements : */
-            switch(e.type) 
-            {
-                /* Clic souris */
-                case SDL_MOUSEBUTTONUP:
-                    printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-                break;
-
-                /* Touche clavier */
-                case SDL_KEYDOWN:
-                    printf("touche pressee (code = %d)\n", e.key.keysym.sym);
-                    
-                    if(e.key.keysym.sym == SDLK_LEFT) {
-                        //p.pos.x-=0.5;
-                        p.command(LEFT);
-                        
-                        //x+=0.5;
-                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-                        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
-                    }
-
-                    else if(e.key.keysym.sym == SDLK_RIGHT) {
-                        //p.pos.x+=0.5;
-                       p.command(RIGHT);
-                        
-                        //x+=0.5;
-                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-                        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
-                    }
-
-                    else if(e.key.keysym.sym == SDLK_UP) {
-                        p.command(UP);
-                        
-                        //x+=0.5;
-                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-                        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-        
-        if(elapsedTime < FRAMERATE_MILLISECONDS) 
-        {
-            SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
-        }
-
-        startTime=elapsedTime;
-
-        p.move(FRAMERATE_MILLISECONDS/1000.);
-        x=-p.pos.x;
-        y=-p.pos.y;
-
-        /*
-        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
-        */
-    }
-    #endif
 
     
     /*** FIN DU JEU ***/

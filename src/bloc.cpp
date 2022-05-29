@@ -1,7 +1,6 @@
 #include <GL/gl.h>
 #include <ctime>
 #include "bloc.hh"
-#include "geometry.hh"
 #include <iostream>
 #include <math.h>
 
@@ -14,15 +13,15 @@ Bloc::Bloc(Vect p, int w, int h, Color c, int a)
     };
 } 
 
-void Bloc::drawBloc()
+void Bloc::drawBloc(int time)
 {
     float y;
     if (this->animated != 0)
     {
-         int cur_time = std::time(nullptr) % 9;
-        this->pos.y = cur_time > 4 ? 10 - cur_time : cur_time;
-    //    float val = time / 2000.0;
-    //    this->pos.y = this->initial_pos.y + cos(val) * 7.0;
+        // int cur_time = std::time(nullptr) % 9;
+        //this->pos.y = cur_time > 4 ? 10 - cur_time : cur_time;
+        float val = time / 2000.0;
+        this->pos.y = this->initial_pos.y + cos(val) * 7.0;
     }
     glBegin(GL_TRIANGLE_FAN);
 
@@ -48,6 +47,8 @@ q
     glEnd();
     ***/
 }
+
+
 
 
 void Bloc::setX(float x){
@@ -111,30 +112,30 @@ Collision BoundingBox::collision_side(BoundingBox other, float offsetx, float of
     // Y a-t-il une collision ?
     Collision collision;
     collision.result = 0;
-    
+
     if (this->collide(other, offsetx, offsety) == NOCOLLISION){
         collision.result = NOCOLLISION;
         return collision;
     };
     // Pour déterminer de quel côté la ou les collisions se trouvent,
     // on coupe la box en 4 et on regarde qui touche
-    BoundingBox subBox = BoundingBox(this->upperLeft, {(this->upperLeft.x +0.1, this->downRight.y)});
+    BoundingBox subBox = BoundingBox({this->upperLeft.x, this->upperLeft.y - 0.1} , {(this->upperLeft.x +0.1), this->downRight.y + 0.1});
     if (subBox.collide(other , offsetx, offsety) == COLLISION){
         collision.result += COLLISIONLEFT;
         collision.xmin = other.downRight.x;
     };
-    subBox = BoundingBox(this->upperLeft, {this->downRight.x,  this->upperLeft.y -0.1});
+    subBox = BoundingBox({this->upperLeft.x + 0.1, this->upperLeft.y}, {this->downRight.x-0.1,  (this->upperLeft.y -0.1)});
     if (subBox.collide(other, offsetx, offsety) == COLLISION){
          printf("collision_side up %f", collision.ymin);
         collision.result += COLLISIONUP;
         collision.ymax = other.downRight.y;
     };
-    subBox = BoundingBox({this->downRight.x - 0.1, this->upperLeft.y}, this->downRight);
+    subBox = BoundingBox({(this->downRight.x - 0.1), (this->upperLeft.y -0.1)}, {this->downRight.x, (this->downRight.y +0.1)});
     if (subBox.collide(other, offsetx, offsety) == COLLISION){
         collision.result += COLLISIONRIGHT;
         collision.xmax = other.upperLeft.x;
     };
-    subBox = BoundingBox({this->upperLeft.x, downRight.y + 0.1}, this->downRight);
+    subBox = BoundingBox({this->upperLeft.x+0.1, (downRight.y + 0.1)}, {this->downRight.x-0.1, this->downRight.y});
     if (subBox.collide(other, offsetx, offsety) == COLLISION){
         collision.result += COLLISIONDOWN;
         

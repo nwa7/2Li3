@@ -3,6 +3,5 @@
 #include "player.hh"
 
 void drawOrigin();
-void drawSquare(Player p);
-
+void drawSquare(int filled);
 #endif

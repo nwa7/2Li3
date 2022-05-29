@@ -1,39 +1,28 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
-#include <vector>
 #include "bloc.hh"
-#include "map.hh"
 
-class Quadtree {
+class Quadtree{
     
     public :
 
-    // Variables
     int xmin, xmax, ymin, ymax;
 
-    std::vector<Bloc> blocs;
+    Bloc* platforms[5];
+    int ind=0;
 
-    Quadtree* upleft = nullptr;
-    Quadtree* downleft = nullptr;
-    Quadtree* upright = nullptr;
-    Quadtree* downright = nullptr;
+    Quadtree* upleft;
+    Quadtree* downleft;
+    Quadtree* upright;
+    Quadtree* downright;
 
-    // Methodes
-
-    Quadtree(int xmin, int xmax, int ymin, int ymax);
-    void generate(Map* map);
-
-    int getX();
-    int getY();
-    bool isLeaf();
-    bool isFull();
-
+    void generate(Bloc* map);
     void split();
+    //Bloc* searchLeaf(float x, float y);
     int searchLeaf(Bloc* obj);
-    void insertBloc(Bloc obj);
-
-    std::vector<Bloc> searchBloc(Bloc* obj);
+    void insertBloc(Bloc* obj);
+    Bloc* collision(Bloc* returnObjets[], Bloc* bloc);
 
 };
 

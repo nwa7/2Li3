@@ -5,19 +5,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <X11/Xlib.h>
-#include "graphics.hh"
 #include "player.hh"
 #include "geometry.hh"
-#include "quadtree.hh"
-
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
 static const int FRAMERATE_MILLISECONDS = 1000/20;
 
 
 // Boucle de jeu
-int gameLoop(SDL_Window* window, Map* map, int &niveau){
+int gameLoop(SDL_Window* window, Map* map){
     // Boucle de jeu
     Color c = colors::blue;
     Vect posi = {0, 0};
@@ -34,27 +30,12 @@ int gameLoop(SDL_Window* window, Map* map, int &niveau){
     //position du joueur-largeur-hauteur-couleur-
     float x = 0;
     float y = 0;
-
-    /* Quadtree */
-    Quadtree qt(0,0,0,0);
-
     int loop = 1;
-    // Menu du début
-    int begin = 1;
 
     // Fin du jeu
     int end = 0;
 
-    //niveaux
-    int bloc1 = 0;
-    int bloc2 = 0;
-    int bloc3 = 0;
-    int bloc4 = 0;
-
-
-    /* Initialisation du niveau/quadtree */
-    qt.generate(map);
-    
+    /*** MENU DEBUT JEU ***/
 
     Uint32 startTime = SDL_GetTicks();
     int h_player_order = 0;
@@ -64,63 +45,37 @@ int gameLoop(SDL_Window* window, Map* map, int &niveau){
 
     while(loop) 
     {
-        /* Calcul du temps ecoule */
-        int elapsedTime = SDL_GetTicks() - startTime;
-
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_MODELVIEW);
+       glClear(GL_COLOR_BUFFER_BIT);
         glLoadIdentity();
+		// Dessins
+
+		// Toute cette structure serait remplacable par un systeme plus vaste qui gererait l affichage des menus
+		// SDL_GL_SwapWindow(window);
+        /*** SDL ***/
+
+        /* Recuperation du temps au debut de la boucle */
         
         /* Placer ici le code de dessin */
 
         glPushMatrix();
 
-            glTranslatef(x, y, 0.);
-            drawOrigin();
-            map->displayMap();
+        glTranslatef(x, y, 0.);
+        //glScalef(q.width, q.height, 1.);
+        drawOrigin();
+        map->displayMap(startTime);
                
         Player * p;
         for (int i=0; i<=4; i++){
             p=&players[i];
-            p->drawBloc();
+            p->drawBloc(startTime);
         };
-        drawSquare(*p);
         glPopMatrix();
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapWindow(window);
         
         
         /* EVENTS */
-        // NIVEAU 1
-        if (niveau ==1){
-            if((int) p->pos.x == 20 && (int) p->pos.y == 0 && p->name == 'T') {
-                niveau = 2;
-            }
-            
-            if (bloc2 && bloc3 && bloc4){ // Tous les blocs sont bien placés niveau 1
-                loop = 0;
-                niveau = 2;
-                bloc1 = 0;
-                bloc2 = 0;
-                bloc3 = 0;
-                bloc4 = 0;
-            }
-        }
-
-        // NIVEAU 2
-        if (niveau == 2){
-            if((int) p->pos.x == 15 && (int) p->pos.y == 0 && p->name == 'T') {
-                end = 1;
-                loop = 0;
-            }
-            
-            if (bloc2 && bloc3 && bloc4){ // Tous les blocs sont bien placés niveau 1
-                end = 1;
-                loop = 0;
-            }
-        }
-
-
+        
         SDL_Event e;
         while(SDL_PollEvent(&e)) 
         {
@@ -137,7 +92,6 @@ int gameLoop(SDL_Window* window, Map* map, int &niveau){
                 /* Clic souris */
                 case SDL_MOUSEBUTTONUP:
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-                break;
 
                 /* Touche clavier */
                 case SDL_KEYDOWN:
