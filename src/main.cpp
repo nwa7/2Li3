@@ -13,14 +13,13 @@
 #include "quadtree.hh"
 #include "fakesdlimage.hh"
 
-static const unsigned int WINDOW_WIDTH = 1080;
-static const unsigned int WINDOW_HEIGHT = 720;
-//static const unsigned int WINDOW_WIDTH = 1920;
-//static const unsigned int WINDOW_HEIGHT = 1080;
+Display* disp= XOpenDisplay(NULL);
+Screen* screen = DefaultScreenOfDisplay(disp);
+static const unsigned int WINDOW_WIDTH = screen->width;
+static const unsigned int WINDOW_HEIGHT = screen->height;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
 static const int FRAMERATE_MILLISECONDS = 1000/20;
-
 
 // TESTS
 
@@ -79,11 +78,6 @@ int main(int argc, char** argv)
     onWindowResized(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 
-    Display* disp= XOpenDisplay(NULL);
-    Screen* screen = DefaultScreenOfDisplay(disp);
-    int height= screen->height;
-    int width=screen->width;
-    
     /*** INITIALISATION BOUCLES ***/
 
     // Menu du début
@@ -167,8 +161,6 @@ int main(int argc, char** argv)
                 /* SAISIE SOURIS */
                 case SDL_MOUSEBUTTONUP:
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-                    printf("longueur (%d) hauteur(%d)", width , height);
-
                     // Clic sur exit
                     if(e.button.x < 571 && e.button.x > 508 && e.button.y < 535 && e.button.y > 498) {
                         begin = 0;
