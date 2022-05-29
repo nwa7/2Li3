@@ -3,7 +3,7 @@
 #include <GL/glu.h>
 #include "geometry.hh"
 
-void drawOrigin(Player p) 
+void drawOrigin() 
 {
     float currentColor[4];
     glGetFloatv(GL_CURRENT_COLOR,currentColor);

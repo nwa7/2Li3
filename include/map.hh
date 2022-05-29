@@ -8,8 +8,8 @@ class Map
 {
     public:
     // Methods
-    Map(int width, int height);
-    void displayMap(int time);
+    Map(int width, int height, std::vector<Bloc> data);
+    void displayMap();
     Bloc operator[](int n);//ca schmoutz
     //faut faire un arbre pas une liste les bg
 

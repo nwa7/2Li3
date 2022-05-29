@@ -8,7 +8,7 @@ Bloc::Bloc(Vect p, int w, int h, Color c, int a)
     : pos(p), width(w), height(h), color(c), animated(a)
 {} 
 
-void Bloc::drawBloc(int time)
+void Bloc::drawBloc()
 {
     if (this->animated != 0)
     {
