@@ -1,7 +1,7 @@
 #ifndef MAP_H
 #define MAP_H
 #include <vector>
-#include "player.hh"
+// #include "player.hh"
 #include "bloc.hh"
 
 class Map

@@ -12,13 +12,12 @@
 #include "graphics.hh"
 #include "quadtree.hh"
 #include "fakesdlimage.hh"
+#include "game.hh"
 
 
 static const unsigned int WINDOW_WIDTH = 1080;
 static const unsigned int WINDOW_HEIGHT = 720;
 
-/* Nombre minimal de millisecondes separant le rendu de deux images */
-static const int FRAMERATE_MILLISECONDS = 1000/20;
 
 
 // TESTS
@@ -27,7 +26,6 @@ Vect posi = {0, 0};
 
 Color c = colors::blue;
 
-Player p = Player({0,5}, 1, 1, c, 0,'T', posi, posi);
 //position du joueur-largeur-hauteur-couleur-
 float x = 0;
 float y = 0;
@@ -239,120 +237,8 @@ int main(int argc, char** argv)
     }
 
 	/*** BOUCLE DE JEU ***/
-
-    while(loop) 
-    {
-       /* Recuperation du temps au debut de la boucle */
-        int startTime = SDL_GetTicks();
-        
-        /* Calcul du temps ecoule */
-        int elapsedTime = SDL_GetTicks() - startTime;
-        
-        /*** SDL ***/
-
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
-        // Active texturing & attache texture au point de bind
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        // Code de dessin 
-
-        glPushMatrix();
-            glTranslatef(x, y, 0.);
-            drawOrigin(p);
-            map.displayMap(elapsedTime);
-            p.drawBloc(elapsedTime);
-        glPopMatrix();       
-        glColor3f(p.color.r, p.color.g, p.color.b); 
-
-        // Detache texture & desactive texturing
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-
-        /* Echange du front et du back buffer : mise a jour de la fenetre */
-        SDL_GL_SwapWindow(window);
-        
-        
-        /* EVENTS */
-
-        if((int) p.pos.x == 21 && (int) p.pos.y == 1) {
-            loop = 0;
-            end = 1;
-        }
-
-        SDL_Event e;
-        while(SDL_PollEvent(&e)) 
-        {
-            /* L'utilisateur ferme la fenetre : */
-           if(e.type == SDL_QUIT||e.key.keysym.sym == SDLK_q) 
-            {
-                loop = 0;
-                break;
-            }
-
-            /* Quelques exemples de traitement d'evenements : */
-            switch(e.type) 
-            {
-                /* Clic souris */
-                case SDL_MOUSEBUTTONUP:
-                    printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-
-                /* Touche clavier */
-                case SDL_KEYDOWN:
-                    printf("touche pressee (code = %d)\n", e.key.keysym.sym);
-                    
-                    if(e.key.keysym.sym == SDLK_LEFT) {
-                        //p.pos.x-=0.5;
-                        p.command(LEFT);
-                        
-                        //x+=0.5;
-                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-                        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
-                    }
-
-                    else if(e.key.keysym.sym == SDLK_RIGHT) {
-                        //p.pos.x+=0.5;
-                       p.command(RIGHT);
-                        
-                        //x+=0.5;
-                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-                        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
-                    }
-
-                    else if(e.key.keysym.sym == SDLK_UP) {
-                        p.command(UP);
-                        
-                        //x+=0.5;
-                        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-                        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-        
-        if(elapsedTime < FRAMERATE_MILLISECONDS) 
-        {
-            SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
-        }
-
-        startTime=elapsedTime;
-
-        p.move(FRAMERATE_MILLISECONDS/1000.);
-        x=-p.pos.x;
-        y=-p.pos.y;
-
-        /*
-        printf("position joueur : x:%f y:%f\n", p.pos.x, p.pos.y);
-        printf("Speed joueur : x:%f y:%f\n", p.speed.x, p.speed.y);
-        */
-    }
+    int response_game = gameLoop(window, &map);
+    
 
     
     /*** FIN DU JEU ***/
