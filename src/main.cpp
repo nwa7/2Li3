@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
+#include <X11/Xlib.h>
 #include "map.hh"
 #include "geometry.hh"
 #include "player.hh"
@@ -13,9 +13,10 @@
 #include "quadtree.hh"
 #include "fakesdlimage.hh"
 
-
-static const unsigned int WINDOW_WIDTH = 1080;
-static const unsigned int WINDOW_HEIGHT = 720;
+Display* disp= XOpenDisplay(NULL);
+Screen* screen = DefaultScreenOfDisplay(disp);
+static const unsigned int WINDOW_WIDTH = screen->width;
+static const unsigned int WINDOW_HEIGHT = screen->height;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
 static const int FRAMERATE_MILLISECONDS = 1000/20;
@@ -43,6 +44,7 @@ Quadtree quad;
 
 int main(int argc, char** argv) 
 {   
+
 	/*** INITIALISATION SDL ***/
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -68,6 +70,7 @@ int main(int argc, char** argv)
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
     onWindowResized(WINDOW_WIDTH, WINDOW_HEIGHT);
+
 
     /*** INITIALISATION BOUCLES ***/
 
@@ -152,7 +155,6 @@ int main(int argc, char** argv)
                 /* SAISIE SOURIS */
                 case SDL_MOUSEBUTTONUP:
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-
                     // Clic sur exit
                     if(e.button.x < 571 && e.button.x > 508 && e.button.y < 535 && e.button.y > 498) {
                         begin = 0;
