@@ -7,15 +7,16 @@
 class Map
 {
     public:
-    // Methods
-    Map(int width, int height);
-    void displayMap(int time);
-    Bloc operator[](int n);//ca schmoutz
-    //faut faire un arbre pas une liste les bg
-
+    
     int width_;
     int height_;
     std::vector<Bloc> platforms_;
+
+    // Methods
+    Map(int width, int height, std::vector<Bloc> data);
+    void displayMap();
+    Bloc operator[](int n);//ca schmoutz
+    //faut faire un arbre pas une liste les bg
 
     //fonction collide ou on récupère la liste des blocs avec lesquels le joueur a une collision
 

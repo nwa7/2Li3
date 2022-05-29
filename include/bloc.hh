@@ -35,7 +35,7 @@ class Bloc
     public:
 
     Bloc(Vect p, int w, int h, Color c, int animated);
-    void drawBloc(int time);
+    void drawBloc();
 
     void setX(float x);
     void setY(float y);
