@@ -11,6 +11,12 @@ SDL_GLContext initGraphics(int width, int height, SDL_Window* window);
 
 void onWindowResized(unsigned int width, unsigned int height);
 
-GLuint initializeTexure(std::string chemin);
+GLuint initTex(std::string chemin);
+
+void fixeTexMot();
+
+void fixeTexEcran();
+
+void affichageMenu(int compteur, int option, GLuint tex1, GLuint tex2);
 
 #endif
