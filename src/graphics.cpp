@@ -8,7 +8,7 @@
 #include "fakesdlimage.hh"
 
 
-SDL_GLContext initGraphics(int width, int height, SDL_Window* window) {
+SDL_GLContext initGraphics(SDL_Window* window) {
 
 	if (window==NULL){
 		printf("Error creating window : %s\n", SDL_GetError());

@@ -23,22 +23,20 @@ void drawOrigin()
     glColor3fv(currentColor);
 }
 
-void drawSquare(int filled) 
+void drawSquare(Player& p)
 {
-    if(filled) 
-    {
-        glBegin(GL_TRIANGLE_FAN);
-    }
-    else 
-    {
-        glBegin(GL_LINE_STRIP);
-    }
+    glBegin(GL_LINE_STRIP);
 
-    glVertex2f( 0.5 , 0.5);
-    glVertex2f( 0.5 , -0.5);
-    glVertex2f( -0.5 , -0.5);
-    glVertex2f( -0.5 , 0.5);
-    
+    glColor3f(p.color.r, p.color.g, p.color.b);
+    Vect posi;
+    if (p.name == 'T'){
+        Vect posi = {20,0};
+    }
+    glVertex2f( posi.x, posi.y);
+    glVertex2f( posi.x+ p.width, posi.y);
+    glVertex2f( posi.x + p.width, posi.y +p.height);
+    glVertex2f( posi.x, posi.y +p.height);
+    glVertex2f( posi.x, posi.y);
 
     glEnd();
 }

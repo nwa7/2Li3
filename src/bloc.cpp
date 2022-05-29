@@ -18,8 +18,6 @@ void Bloc::drawBloc(int time)
     float y;
     if (this->animated != 0)
     {
-        // int cur_time = std::time(nullptr) % 9;
-        //this->pos.y = cur_time > 4 ? 10 - cur_time : cur_time;
         float val = time / 2000.0;
         this->pos.y = this->initial_pos.y + cos(val) * 7.0;
     }
@@ -119,23 +117,23 @@ Collision BoundingBox::collision_side(BoundingBox other, float offsetx, float of
     };
     // Pour déterminer de quel côté la ou les collisions se trouvent,
     // on coupe la box en 4 et on regarde qui touche
-    BoundingBox subBox = BoundingBox({this->upperLeft.x, this->upperLeft.y - 0.1} , {(this->upperLeft.x +0.1), this->downRight.y + 0.1});
+    BoundingBox subBox = BoundingBox({this->upperLeft.x, static_cast<float>(this->upperLeft.y - 0.1)} , {static_cast<float>((this->upperLeft.x +0.1)), static_cast<float>(this->downRight.y + 0.1)});
     if (subBox.collide(other , offsetx, offsety) == COLLISION){
         collision.result += COLLISIONLEFT;
         collision.xmin = other.downRight.x;
     };
-    subBox = BoundingBox({this->upperLeft.x + 0.1, this->upperLeft.y}, {this->downRight.x-0.1,  (this->upperLeft.y -0.1)});
+    subBox = BoundingBox({static_cast<float>(this->upperLeft.x + 0.1), this->upperLeft.y}, {static_cast<float>(this->downRight.x-0.1),  static_cast<float>((this->upperLeft.y -0.1))});
     if (subBox.collide(other, offsetx, offsety) == COLLISION){
          printf("collision_side up %f", collision.ymin);
         collision.result += COLLISIONUP;
         collision.ymax = other.downRight.y;
     };
-    subBox = BoundingBox({(this->downRight.x - 0.1), (this->upperLeft.y -0.1)}, {this->downRight.x, (this->downRight.y +0.1)});
+    subBox = BoundingBox({static_cast<float>((this->downRight.x - 0.1)), static_cast<float>((this->upperLeft.y -0.1))}, {this->downRight.x, static_cast<float>((this->downRight.y +0.1))});
     if (subBox.collide(other, offsetx, offsety) == COLLISION){
         collision.result += COLLISIONRIGHT;
         collision.xmax = other.upperLeft.x;
     };
-    subBox = BoundingBox({this->upperLeft.x+0.1, (downRight.y + 0.1)}, {this->downRight.x-0.1, this->downRight.y});
+    subBox = BoundingBox({static_cast<float>(this->upperLeft.x+0.1), static_cast<float>((downRight.y + 0.1))}, {static_cast<float>(this->downRight.x-0.1), this->downRight.y});
     if (subBox.collide(other, offsetx, offsety) == COLLISION){
         collision.result += COLLISIONDOWN;
         

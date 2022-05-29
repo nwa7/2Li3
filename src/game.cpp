@@ -66,7 +66,8 @@ int gameLoop(SDL_Window* window, Map* map){
                
         Player * p;
         for (int i=0; i<=4; i++){
-            p=&players[i];
+            p = players + i;
+            drawSquare(*p);
             p->drawBloc(startTime);
         };
         glPopMatrix();
@@ -75,6 +76,35 @@ int gameLoop(SDL_Window* window, Map* map){
         
         
         /* EVENTS */
+          /* EVENTS */        // NIVEAU 1
+        if (map->level_ == 1){
+            if((int) current_player->pos.x == 20 && (int) current_player->pos.y == 0 && current_player->name == 'T') {
+                map->level_ = 2;
+            }
+           /* 
+            if (bloc2 && bloc3 && bloc4){ // Tous les blocs sont bien placés niveau 1
+                loop = 0;
+                niveau = 2;
+                bloc1 = 0;
+                bloc2 = 0;
+                bloc3 = 0;
+                bloc4 = 0;
+            }
+            */
+        }
+
+        if (map->level_ == 2){
+            if((int) current_player->pos.x == 15 && (int) current_player->pos.y == 0 && current_player->name == 'T') {
+                end = 1;
+                loop = 0;
+            }
+            /*
+            if (bloc2 && bloc3 && bloc4){ // Tous les blocs sont bien placés niveau 1
+                end = 1;
+                loop = 0;
+            }
+            */
+        }
         
         SDL_Event e;
         while(SDL_PollEvent(&e)) 
@@ -181,4 +211,6 @@ int gameLoop(SDL_Window* window, Map* map){
     printf("position joueur : x:%f y:%f\n", current_player->pos.x, current_player->pos.y);
     printf("Speed joueur : x:%f y:%f\n", current_player->speed.x, current_player->speed.y);
     }
+
+    return 0;
 }

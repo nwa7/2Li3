@@ -44,11 +44,11 @@ void Player::move(double dt, Map* map, Player* players){
 
     this->hasOrder=0;
 
-    Vect futurSpeed = {this->acceleration.x*dt+this->speed.x,this->acceleration.y*dt+this->speed.y };
+    Vect futurSpeed = {static_cast<float>(this->acceleration.x*dt+this->speed.x),static_cast<float>(this->acceleration.y*dt+this->speed.y) };
 
 
-    Vect futurPos = {this->acceleration.x*dt*dt/2+this->speed.x*dt +this->pos.x,
-    this->acceleration.y*dt*dt/2+this->speed.y*dt + this->pos.y};
+    Vect futurPos = {static_cast<float>(this->acceleration.x*dt*dt/2+this->speed.x*dt +this->pos.x),
+    static_cast<float>(this->acceleration.y*dt*dt/2+this->speed.y*dt + this->pos.y)};
 
 
     if (futurSpeed.x<-10){

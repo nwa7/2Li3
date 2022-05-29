@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <X11/Xlib.h>
+#include <vector>
 
 #include "map.hh"
 #include "geometry.hh"
@@ -14,11 +16,10 @@
 #include "fakesdlimage.hh"
 #include "game.hh"
 
-
-static const unsigned int WINDOW_WIDTH = 1080;
-static const unsigned int WINDOW_HEIGHT = 720;
-
-
+Display* disp = XOpenDisplay(NULL);
+Screen* screen = XDefaultScreenOfDisplay(disp);
+static const unsigned int WINDOW_WIDTH = screen->width;
+static const unsigned int WINDOW_HEIGHT = screen->height;
 
 // TESTS
 
@@ -34,7 +35,6 @@ float y = 0;
 Vect tabvertex[256];
 int compteur;
 float aspectRatio;
-Map map(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 /*
 Bloc* maap(posi, 10, 10, {0.1, 0.1, 0.5}, 0);
@@ -46,8 +46,45 @@ quad.insertBloc(test);
 */
 
 
-int main(int argc, char** argv) 
+int main(void) 
 {   
+
+    std::vector<Bloc> level_one;
+    level_one.push_back(Bloc({-30,-15}, 45,15, colors::green,0)); 
+    level_one.push_back(Bloc({15,-15}, 5,10, colors::purple,0)); 
+    level_one.push_back(Bloc({20,-15}, 5,5, colors::orange,0)); 
+    level_one.push_back(Bloc({25,-15}, 10,1, colors::yellow,0)); 
+    level_one.push_back(Bloc({35,-15}, 50,10, colors::blue,0)); 
+    level_one.push_back(Bloc({75,-2}, 10,3, colors::purple,1));
+    level_one.push_back(Bloc({53,-5}, 20,5, colors::orange,0));  
+    level_one.push_back(Bloc({85,-15}, 5,5, colors::yellow,0));
+    level_one.push_back(Bloc({90,-15}, 60,1, colors::green,0));  
+    level_one.push_back(Bloc({90,10}, 10,3, colors::red,0));  
+    level_one.push_back(Bloc({105,14}, 10,3, colors::green,0));  
+    level_one.push_back(Bloc({115,-12}, 15,20, colors::orange,0));  
+    level_one.push_back(Bloc({130,-12}, 18,2, colors::orange,0));
+    level_one.push_back(Bloc({148,-14}, 2,4, colors::orange,0));
+    level_one.push_back(Bloc({150,-15}, 7,17, colors::blue,0));
+    level_one.push_back(Bloc({152,2}, 5,22, colors::green,0));
+    level_one.push_back(Bloc({157,-15}, 7,20, colors::red,0));
+    level_one.push_back(Bloc({164,-15}, 7,23, colors::blue,0));
+    level_one.push_back(Bloc({171,-15}, 4,26, colors::purple,0));
+
+    Map map1(WINDOW_WIDTH, WINDOW_HEIGHT, 1, level_one);
+
+    std::vector<Bloc> level_two;
+    level_two.push_back(Bloc({-30,-15}, 45,15, colors::blue,0)); 
+    level_two.push_back(Bloc({15,-15}, 5,10, colors::orange,0)); 
+    level_two.push_back(Bloc({20,-15}, 5,5, colors::purple,0)); 
+    level_two.push_back(Bloc({25,-15}, 10,1, colors::yellow,0)); 
+    level_two.push_back(Bloc({35,-15}, 50,10, colors::blue,0)); 
+    level_two.push_back(Bloc({53,-5}, 20,5, colors::orange,0));  
+    level_two.push_back(Bloc({85,-15}, 5,5, colors::yellow,0));
+    level_two.push_back(Bloc({90,-15}, 60,1, colors::green,0));  
+    level_two.push_back(Bloc({90,10}, 10,3, colors::red,0));  
+    Map map2(WINDOW_WIDTH, WINDOW_HEIGHT, 2, level_two);
+
+
 	/*** INITIALISATION SDL ***/
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -55,7 +92,7 @@ int main(int argc, char** argv)
 		exit(11);
 	}
 	SDL_Window* window = SDL_CreateWindow("Barbapix", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH , WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-    SDL_GLContext glcontext = initGraphics(WINDOW_WIDTH , WINDOW_HEIGHT, window);
+    SDL_GLContext glcontext = initGraphics(window);
 
 	/* TEXTURES */
 	GLuint ecran_debut = initTex("images/Ecran_jeu.png");
@@ -83,8 +120,17 @@ int main(int argc, char** argv)
     // Boucle de jeu
     int loop = 0;
 
+    // niveau
+    int niveau = 1;
+    int bloc1 = 0;
+    int bloc2 = 0;
+    int bloc3 = 0;
+    int bloc4 = 0;
+
     // Fin du jeu
     int end = 0;
+
+
 
     /*** MENU DEBUT JEU ***/
 
@@ -237,7 +283,7 @@ int main(int argc, char** argv)
     }
 
 	/*** BOUCLE DE JEU ***/
-    int response_game = gameLoop(window, &map);
+    int response_game = gameLoop(window, &map1);
     
 
     
