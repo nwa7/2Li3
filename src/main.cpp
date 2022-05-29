@@ -16,6 +16,8 @@
 
 static const unsigned int WINDOW_WIDTH = 1080;
 static const unsigned int WINDOW_HEIGHT = 720;
+//static const unsigned int WINDOW_WIDTH = 1920;
+//static const unsigned int WINDOW_HEIGHT = 1080;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
 static const int FRAMERATE_MILLISECONDS = 1000/20;
