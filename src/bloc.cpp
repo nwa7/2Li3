@@ -19,7 +19,7 @@ void Bloc::drawBloc(int time)
     if (this->animated != 0)
     {
         float val = time / 2000.0;
-        this->pos.y = this->initial_pos.y + cos(val) * 7.0;
+        this->pos.y = this->initial_pos.y + cos(val) * 5.0 +8.0;
     }
     glBegin(GL_TRIANGLE_FAN);
 

@@ -19,13 +19,12 @@ void Player::command(int direction){
             printf("h:%i ", this->hasCollision);
 
             if (this->hasCollision==1){
-                this->speed.y=7.0;
+                this->speed.y=10.0;
 
             }
             else 
             {
                 this->hasOrder=0;
-
             }
 
         break;

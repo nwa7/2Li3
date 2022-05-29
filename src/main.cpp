@@ -71,12 +71,6 @@ int main(void)
     // Boucle de jeu
     int loop = 0;
 
-    // niveau
-    int bloc1 = 0;
-    int bloc2 = 0;
-    int bloc3 = 0;
-    int bloc4 = 0;
-
     // Fin du jeu
     int end = 1;
 
