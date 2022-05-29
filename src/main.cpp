@@ -39,7 +39,6 @@ float aspectRatio;
 Map map(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 /* Quadtree */
-Quadtree quad;
 
 
 int main(int argc, char** argv) 
