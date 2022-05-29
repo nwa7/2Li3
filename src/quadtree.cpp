@@ -1,4 +1,9 @@
+#include <vector>
 #include "quadtree.hh"
+
+Quadtree::Quadtree(int xmin, int xmax, int ymin, int ymax) :
+    xmin(xmin), xmax(xmax), ymin(ymin), ymax(ymax) 
+{}
 
 void Quadtree::generate(Bloc* map){
 
@@ -23,7 +28,7 @@ bool Quadtree::isLeaf() {
     return (this->upleft==nullptr && this->upright==nullptr && this->downleft==nullptr && this->downright==nullptr);
 }
 bool Quadtree::isFull() {
-    return (blocs.size()>4);
+    return (this->blocs.size()>4);
 }
 
 void Quadtree::split() {
@@ -68,8 +73,8 @@ int Quadtree::searchLeaf(Bloc* obj){
     return index;
 }
 
-void Quadtree::insertBloc(Bloc* obj) {
-    int index = this->searchLeaf(obj);
+void Quadtree::insertBloc(Bloc obj) {
+    int index = this->searchLeaf(&obj);
 
     // Si l'objet appartient à un enfant
     if(!this->isLeaf()) {
@@ -103,7 +108,7 @@ void Quadtree::insertBloc(Bloc* obj) {
             for(Bloc bloc : this->blocs) {
                 this->insertBloc(bloc);
             }
-            blocs.clear();
+            this->blocs.clear();
             this->insertBloc(obj);
         }
         else {

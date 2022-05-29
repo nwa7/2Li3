@@ -1,6 +1,7 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
+#include <vector>
 #include "bloc.hh"
 
 class Quadtree {
@@ -29,7 +30,7 @@ class Quadtree {
 
     void split();
     int searchLeaf(Bloc* obj);
-    void insertBloc(Bloc* obj);
+    void insertBloc(Bloc obj);
 
     std::vector<Bloc> searchBloc(Bloc* obj);
 
