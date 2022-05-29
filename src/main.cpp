@@ -13,7 +13,6 @@
 #include "quadtree.hh"
 #include "fakesdlimage.hh"
 
-
 static const unsigned int WINDOW_WIDTH = 1080;
 static const unsigned int WINDOW_HEIGHT = 720;
 //static const unsigned int WINDOW_WIDTH = 1920;
@@ -52,6 +51,7 @@ quad.insertBloc(test);
 
 int main(int argc, char** argv) 
 {   
+
 	/*** INITIALISATION SDL ***/
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -160,7 +160,12 @@ int main(int argc, char** argv)
 
                 /* SAISIE SOURIS */
                 case SDL_MOUSEBUTTONUP:
+                    GLFWvidmode return_struct;
+                    glfwGetDesktopMode( &return_struct);
+                    int heigh=return_struct.Height
+                    int width=return_struct.Width
                     printf("clic en (%d, %d)\n", e.button.x, e.button.y);
+                    printf("longueur (%d) hauteur(%d)", width , height)
 
                     // Clic sur exit
                     if(e.button.x < 571 && e.button.x > 508 && e.button.y < 535 && e.button.y > 498) {
